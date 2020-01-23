@@ -32,6 +32,7 @@ public class UserService {
 			//Optional<User> userObj=userRepo.findByuseremail(user.getUseremail());
 			//User userData=userObj.get();
 			Optional<Role> role=roleService.findRole(roleId);
+			System.out.println("RoleId: "+roleId);
 			if(role.isPresent()) {
 				Role roleObj=role.get();
 				user.getRole().add(roleObj);

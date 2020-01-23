@@ -16,7 +16,9 @@ import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
 import com.aroha.HRMSProject.payload.LoginRequest;
 import com.aroha.HRMSProject.payload.SignUpRequest;
+import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.JwtTokenProvider;
+import com.aroha.HRMSProject.security.UserPrincipal;
 import com.aroha.HRMSProject.service.UserService;
 
 @RestController
@@ -31,10 +33,10 @@ public class AuthController {
 
 	@Autowired
 	JwtTokenProvider tokenProvider;
-	
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	JwtAuthenticationResponse jwtObj;
 
@@ -46,7 +48,7 @@ public class AuthController {
 						loginRequest.getPassword()
 						)
 				);
-		
+
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		String jwt = tokenProvider.generateToken(authentication);
 		User user=userService.getuser(loginRequest.getUsernameOrEmail()).get();
@@ -59,15 +61,22 @@ public class AuthController {
 		//return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 		return ResponseEntity.ok(jwtObj);
 	}
-	
+
+	//Add Users
 	@PostMapping("/addUsers")
-	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp){
-		Long roleId=(long) signUp.getRoleId();
+	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
+		if(user.isAdminRole()) {
+		Long roleId=signUp.getRoleId();
 		User getUser=signUp.getAdduser();
+		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
 		signUp.setStatus(userService.addUser(roleId, getUser));
 		return ResponseEntity.ok(signUp);
+		}
+		signUp.setStatus("Not authorized");
+		return ResponseEntity.ok(signUp);
 	}
-	
+
+	//Get All Users
 	@GetMapping("/getAllUsers")
 	public ResponseEntity<?> getAllUsers(){
 		return ResponseEntity.ok(userService.getAllUser());	

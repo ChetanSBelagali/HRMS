@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class JwtAuthenticationResponse {
 
 	private String accessToken;
-	private String tokenType = "Bearer";
+	private String tokenType;
     private Long id;
     private String username;
     private String name;

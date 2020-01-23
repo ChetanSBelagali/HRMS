@@ -9,8 +9,8 @@ public class SignUpRequest {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private User adduser;
 	private String status;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private long roleId;
-	
 	
 	
 	public User getAdduser() {
@@ -26,7 +26,6 @@ public class SignUpRequest {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	@JsonIgnore
 	public long getRoleId() {
 		return roleId;
 	}

@@ -17,9 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
+import com.aroha.HRMSProject.property.FileStorageProperties;
 import com.aroha.HRMSProject.security.CustomUserDetailsService;
 import com.aroha.HRMSProject.security.JwtAuthenticationEntryPoint;
 import com.aroha.HRMSProject.security.JwtAuthenticationFilter;
+import com.aroha.HRMSProject.service.FileStorageService;
 
 
 /**
@@ -38,10 +40,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
+	
+	@Autowired
+	private FileStorageService fileStorageService;
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter() {
 		return new JwtAuthenticationFilter();
+	}
+	
+	@Bean
+	public FileStorageProperties fileStorageProperties() {
+		return new FileStorageProperties();
 	}
 
 	@Override
