@@ -65,14 +65,10 @@ public class AuthController {
 	//Add Users
 	@PostMapping("/addUsers")
 	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
-		if(user.isAdminRole()) {
 		Long roleId=signUp.getRoleId();
 		User getUser=signUp.getAdduser();
 		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
 		signUp.setStatus(userService.addUser(roleId, getUser));
-		return ResponseEntity.ok(signUp);
-		}
-		signUp.setStatus("Not authorized");
 		return ResponseEntity.ok(signUp);
 	}
 

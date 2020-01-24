@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.aroha.HRMSProject.exception.ResourceNotFoundException;
 import com.aroha.HRMSProject.model.JobListing;
+import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.repo.JobListingRepository;
 
 @Service
@@ -65,6 +66,10 @@ public class HRService {
 			return "No Record Found";
 		}
 		
+	}
+	
+	public Optional<JobListing> getJobListByJobListId(long joblistid){
+		return jobListingRepo.findById(joblistid);
 	}
 }
 

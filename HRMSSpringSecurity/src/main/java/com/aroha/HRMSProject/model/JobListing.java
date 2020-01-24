@@ -1,9 +1,16 @@
 package com.aroha.HRMSProject.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GeneratorType;
 
@@ -13,6 +20,14 @@ public class JobListing {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long joblistid;
 	private String jobdesc;
+
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "job_desc",
+	joinColumns = @JoinColumn(name = "joblist_id"),
+	inverseJoinColumns = @JoinColumn(name = "cand_id"))
+	private Set<Candidate> candidate=new HashSet<>();
+
 	public long getJoblistid() {
 		return joblistid;
 	}
@@ -25,6 +40,12 @@ public class JobListing {
 	public void setJobdesc(String jobdesc) {
 		this.jobdesc = jobdesc;
 	}
+	public Set<Candidate> getCandidate() {
+		return candidate;
+	}
+	public void setCandidate(Set<Candidate> candidate) {
+		this.candidate = candidate;
+	}
 
-	
+
 }

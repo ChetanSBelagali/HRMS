@@ -23,6 +23,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 			HttpServletResponse httpServletResponse,
 			AuthenticationException e) throws IOException, ServletException {
 		logger.error("Responding with unauthorized error. Message - {}", e.getMessage());
-		httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Username or password is wrong");
+		httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 	}
 }
