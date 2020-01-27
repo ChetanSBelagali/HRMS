@@ -1,5 +1,6 @@
 package com.aroha.HRMSProject.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,9 +14,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 
 import org.hibernate.annotations.GeneratorType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class JobListing {
+public class JobListing implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long joblistid;
