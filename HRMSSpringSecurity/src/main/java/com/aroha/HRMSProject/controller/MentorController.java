@@ -39,6 +39,7 @@ public class MentorController {
 	@Autowired
 	Candidate candidate;
 
+	//Create New Profile Uploader or Create New Candidate
 	@PostMapping("/createNewFileUploader")
 	public ResponseEntity<?> createNewFileUploader(@RequestParam("model") String model, @RequestPart(name="file") MultipartFile file){
 		ObjectMapper mapper=new ObjectMapper();
@@ -63,6 +64,7 @@ public class MentorController {
 		}
 	}
 
+	//Get FileUploader By ID
 	@GetMapping("/getFileUpCandById")
 	public ResponseEntity<?> getFileUploaderCandById(@RequestBody Candidate candidate){
 		System.out.println("Id is: "+candidate.getCandid());
@@ -70,6 +72,7 @@ public class MentorController {
 		return ResponseEntity.ok(getFileUpDetailsObj);		
 	}
 
+	//Get All File Uploaders
 	@GetMapping("/getAllFileUploaders")
 	public ResponseEntity<?> getAllFileUploaders(){
 		return ResponseEntity.ok(mentorService.getAllFileUploaders());	

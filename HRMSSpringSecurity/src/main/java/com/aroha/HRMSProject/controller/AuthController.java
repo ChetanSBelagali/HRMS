@@ -7,7 +7,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,6 +80,7 @@ public class AuthController {
 		return ResponseEntity.ok(userService.getAllUser());	
 	}
 	
+	//Update Users
 	@PostMapping("/updateUserInRoles")
 	public ResponseEntity<?> updateUserInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
 		Long userId=signUp.getAdduser().getUserid();
@@ -87,4 +90,10 @@ public class AuthController {
 		return ResponseEntity.ok(signUp);		
 	}
 
+	//Delete Particular User based on ID
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteUserInRoles(@PathVariable("id") long id){
+		String result=userService.deleteUserInRoles(id);
+		return ResponseEntity.ok(result);		
+	}
 }

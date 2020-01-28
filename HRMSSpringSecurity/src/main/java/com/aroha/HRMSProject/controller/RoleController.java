@@ -20,6 +20,7 @@ public class RoleController {
 	@Autowired
 	private RoleService roleService;
 
+	//Create Role
 	@PostMapping("/createRole")
 	public ResponseEntity<?> createNewRole(@RequestBody CreateRole createNewRole,@CurrentUser UserPrincipal user){
 		if(!user.isAdminRole()) {
@@ -30,6 +31,7 @@ public class RoleController {
 		return ResponseEntity.ok(createNewRole);
 	}
 
+	//Find Role
 	@GetMapping("/findRoles")
 	public ResponseEntity<?> getAllRole(){
 		if(roleService.getAllRole().isEmpty()) {

@@ -44,11 +44,11 @@ public class UserService {
 			}
 		}
 	}
-	
-	
+
+
 	public List<User> getAllUser(){
 		return userRepo.findAll();
-		
+
 	}
 
 	public String updateUser(Long userid, User user) {
@@ -67,6 +67,17 @@ public class UserService {
 		else {
 			return "Something Went Wrong";
 		}	
+	}
+
+	public String deleteUserInRoles(Long userId) {
+		Optional<User> userIdObj=userRepo.findByuserid(userId);
+		if(userIdObj.isPresent()) {
+			userRepo.deleteById(userId);
+			return "User Deleted Successfully";
+		}
+		else {
+			return "User ID not Present";
+		}
 	}
 
 }
