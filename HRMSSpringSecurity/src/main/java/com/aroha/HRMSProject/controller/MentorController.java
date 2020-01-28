@@ -53,16 +53,16 @@ public class MentorController {
 			output.write(data);
 			Path path=Paths.get(filePath+"/"+addCandObj.getCandemail()+"-"+fileName);
 			addCandObj.setFileurl(path.toString());
-			addCandObj.setCreatedat(Calendar.getInstance().getTime().toInstant());
+			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
+			addCandObj.setCreatedat(dateTime);
 			addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
-			System.out.println("jhfhjfhjfhjhjh is: "+addCandReq.getAddCandidate().getJoblisting());
 			return ResponseEntity.ok(addCandReq);	
 		}
 		catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());
 		}
 	}
-	
+
 	@GetMapping("/getFileUpCandById")
 	public ResponseEntity<?> getFileUploaderCandById(@RequestBody Candidate candidate){
 		System.out.println("Id is: "+candidate.getCandid());

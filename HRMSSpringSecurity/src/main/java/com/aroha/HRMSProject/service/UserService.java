@@ -51,4 +51,22 @@ public class UserService {
 		
 	}
 
+	public String updateUser(Long userid, User user) {
+		Optional<User> userId=userRepo.findByuserid(userid);
+		if(userId.isPresent()) {
+			User useObj=userId.get();
+			useObj.setUsername(user.getUsername());
+			useObj.setUseremail(user.getUseremail());
+			useObj.setUserpassword(user.getUserpassword());
+			useObj.setPhoneNumber(user.getPhoneNumber());
+			useObj.setAddress(user.getAddress());
+			useObj.setRole(user.getRole());
+			userRepo.save(useObj);
+			return "User Profile is Updated Successfully";
+		}
+		else {
+			return "Something Went Wrong";
+		}	
+	}
+
 }

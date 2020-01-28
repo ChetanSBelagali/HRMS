@@ -24,10 +24,12 @@ public class JobListing implements Serializable {
 	private String jobdesc;
 
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "job_desc",
-	joinColumns = @JoinColumn(name = "joblist_id"),
-	inverseJoinColumns = @JoinColumn(name = "cand_id"))
+	//@ManyToMany(fetch = FetchType.LAZY)
+	//@JoinTable(name = "job_desc",
+	//joinColumns = @JoinColumn(name = "joblist_id"),
+	//inverseJoinColumns = @JoinColumn(name = "cand_id"))
+	
+	@ManyToMany(mappedBy = "joblisting")
 	private Set<Candidate> candidate=new HashSet<>();
 
 	public long getJoblistid() {

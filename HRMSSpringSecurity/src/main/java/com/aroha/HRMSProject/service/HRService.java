@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aroha.HRMSProject.exception.ResourceNotFoundException;
+import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.model.JobListing;
 import com.aroha.HRMSProject.model.Role;
+import com.aroha.HRMSProject.model.User;
+import com.aroha.HRMSProject.repo.CandidateRepository;
 import com.aroha.HRMSProject.repo.JobListingRepository;
 
 @Service
@@ -17,6 +20,9 @@ public class HRService {
 
 	@Autowired
 	JobListingRepository jobListingRepo;
+	
+	@Autowired
+	CandidateRepository candidateRepository;
 
 	public JobListing createJobListing(JobListing jobListing) {
 		return jobListingRepo.save(jobListing);
@@ -71,6 +77,33 @@ public class HRService {
 	public Optional<JobListing> getJobListByJobListId(long joblistid){
 		return jobListingRepo.findById(joblistid);
 	}
+
+	public ArrayList<Candidate> getUploadedProfilesForPerticularJob(long joblistId) {
+		List<Long> candObj=candidateRepository.getByJobListId(joblistId);
+		ArrayList<Candidate> arrayList=new ArrayList<>();
+		// TODO Auto-generated method stub
+		for(Long i:candObj) {
+			//Optional<Candidate> candaData=candidateRepository.findById(i);
+			Optional<Candidate> candaData=candidateRepository.findById(i);
+			Candidate cObj=candaData.get();
+			arrayList.add(cObj);			
+		}		
+		return arrayList;		
+	}
+
+	public String getProfileURLToDownloadById(Candidate candidate) {
+		// TODO Auto-generated method stub
+		Optional<Candidate> candid=candidateRepository.findBycandid(candidate.getCandid());
+		if(candid.isPresent()) {
+			Candidate candObj=candid.get();
+			String URL=candObj.getFileurl();
+			return URL;
+		}
+		else {
+			return "No Id Found";
+		}
+	}
+	
 }
 
 

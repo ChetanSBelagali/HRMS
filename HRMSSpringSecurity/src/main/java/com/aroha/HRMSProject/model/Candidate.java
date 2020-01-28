@@ -25,11 +25,17 @@ public class Candidate implements Serializable {
 	private String mobnumber;
 	private String candemail;
 	private String fileurl;
-	private Instant createdat;
+	private String createdat;
 
-	@ManyToMany(mappedBy = "candidate")
+	//@ManyToMany(mappedBy = "candidate")
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "candidate1",
+	joinColumns = @JoinColumn(name = "candid"),
+	inverseJoinColumns = @JoinColumn(name = "joblistid"))
 	private Set<JobListing> joblisting=new HashSet<>();
 
+	@JsonIgnore
 	public Set<JobListing> getJoblisting() {
 		return joblisting;
 	}
@@ -78,13 +84,12 @@ public class Candidate implements Serializable {
 		this.fileurl = fileurl;
 	}
 
-	public Instant getCreatedat() {
+	public String getCreatedat() {
 		return createdat;
 	}
 
-	public void setCreatedat(Instant createdat) {
+	public void setCreatedat(String createdat) {
 		this.createdat = createdat;
 	}
-
 
 }

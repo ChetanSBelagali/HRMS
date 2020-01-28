@@ -77,5 +77,14 @@ public class AuthController {
 	public ResponseEntity<?> getAllUsers(){
 		return ResponseEntity.ok(userService.getAllUser());	
 	}
+	
+	@PostMapping("/updateUserInRoles")
+	public ResponseEntity<?> updateUserInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
+		Long userId=signUp.getAdduser().getUserid();
+		User getUser=signUp.getAdduser();
+		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
+		signUp.setStatus(userService.updateUser(userId, getUser));
+		return ResponseEntity.ok(signUp);		
+	}
 
 }
