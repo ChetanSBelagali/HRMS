@@ -14,6 +14,8 @@ import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.repo.CandidateRepository;
 import com.aroha.HRMSProject.repo.JobListingRepository;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @Service
 public class HRService {
@@ -23,6 +25,14 @@ public class HRService {
 	
 	@Autowired
 	CandidateRepository candidateRepository;
+	
+	@Autowired
+	private JavaMailSender javaMailSender;
+	
+	@Autowired
+	public HRService(JavaMailSender javaMailSender) {
+		this.javaMailSender = javaMailSender;
+	}
 
 	public JobListing createJobListing(JobListing jobListing) {
 		return jobListingRepo.save(jobListing);
@@ -102,6 +112,23 @@ public class HRService {
 		else {
 			return "No Id Found";
 		}
+	}
+
+	public void sendEmail(String userEmail) {
+		// TODO Auto-generated method stub
+		SimpleMailMessage mail = new SimpleMailMessage();
+		mail.setTo(userEmail);
+		mail.setSubject("Testing Mail API");
+		mail.setText("Hurray ! You have done that dude...");
+		System.out.println("Mail is: "+mail.getText());
+
+		/*
+		 * This send() contains an Object of SimpleMailMessage as an Parameter
+		 */
+		try {
+		javaMailSender.send(mail);
+		System.out.println("Mail sent successfully");
+		}catch(Exception ex) {System.out.println(ex.getMessage());}
 	}
 	
 }

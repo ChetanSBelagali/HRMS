@@ -27,8 +27,6 @@ public class Candidate implements Serializable {
 	private String fileurl;
 	private String createdat;
 
-	//@ManyToMany(mappedBy = "candidate")
-	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "candidate1",
 	joinColumns = @JoinColumn(name = "candid"),

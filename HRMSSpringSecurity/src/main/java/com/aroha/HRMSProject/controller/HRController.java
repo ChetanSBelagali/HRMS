@@ -13,11 +13,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -130,5 +127,12 @@ public class HRController {
 			}
 		}
 		return ResponseEntity.ok("Downloaded Successfully");
+	}
+	
+	@PostMapping("/sendEmail")
+	public ResponseEntity<?> sendEmail(@RequestParam("UserEmail") String userEmail){
+		System.out.println("Email is: "+userEmail);
+		hrService.sendEmail(userEmail);
+		return ResponseEntity.ok("SUCCESS");		
 	}
 }
