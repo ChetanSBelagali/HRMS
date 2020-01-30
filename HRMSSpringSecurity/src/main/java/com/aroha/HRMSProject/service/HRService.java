@@ -14,6 +14,8 @@ import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.repo.CandidateRepository;
 import com.aroha.HRMSProject.repo.JobListingRepository;
+import com.sun.mail.util.MailSSLSocketFactory;
+
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -130,7 +132,34 @@ public class HRService {
 		System.out.println("Mail sent successfully");
 		}catch(Exception ex) {System.out.println(ex.getMessage());}
 	}
-	
+
+	public Candidate updateFileUploader(Candidate candidate) {
+		Optional<Candidate> candId=candidateRepository.findBycandid(candidate.getCandid());
+		if(candId.isPresent()) {
+			Candidate candObj=candId.get();
+			candObj.setSetstatus(candidate.getSetstatus());
+			candObj.setInterviewername(candidate.getInterviewername());
+			candObj.setScheduledtime(candidate.getScheduledtime());
+			return candidateRepository.save(candObj);
+		}
+		return candidateRepository.save(candidate);		
+	}
+
+	public Candidate scheduleInterview(Candidate candidate) {
+		Optional<Candidate> candObj=candidateRepository.findBycandid(candidate.getCandid());
+		if(candObj.isPresent()) {
+			return candObj.get();
+		}
+		return null;		
+	}
+
+	public List<Candidate> viewAllScheduledInterviews() {
+		List<Candidate> allInterviews=candidateRepository.getAllScheduledInterviews();
+		if(allInterviews.size()>0) {
+			return allInterviews;
+		}
+		return null;		
+	}	
 }
 
 

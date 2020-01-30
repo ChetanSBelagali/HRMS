@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 public class User {
@@ -53,6 +55,7 @@ public class User {
 	public void setRole(Set<Role> role) {
 		this.role = role;
 	}
+
 	public String getUserpassword() {
 		return userpassword;
 	}
@@ -65,6 +68,7 @@ public class User {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
+
 	public String getAddress() {
 		return address;
 	}

@@ -20,6 +20,9 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>{
 	
 	@Query(value="select * from candidate1 where joblistid=?1",nativeQuery = true)
 	List<Long> getByJobListId(long joblistId);
+	
+	@Query(value="select * from candidate where setstatus='Accept'", nativeQuery=true)
+	List<Candidate> getAllScheduledInterviews();
 
 
 	Boolean existsBycandid(long candid);

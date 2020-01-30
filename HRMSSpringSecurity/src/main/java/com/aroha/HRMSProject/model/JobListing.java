@@ -44,6 +44,8 @@ public class JobListing implements Serializable {
 	public void setJobdesc(String jobdesc) {
 		this.jobdesc = jobdesc;
 	}
+	
+	@JsonIgnore
 	public Set<Candidate> getCandidate() {
 		return candidate;
 	}

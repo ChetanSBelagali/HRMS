@@ -85,6 +85,7 @@ public class AuthController {
 	public ResponseEntity<?> updateUserInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
 		Long userId=signUp.getAdduser().getUserid();
 		User getUser=signUp.getAdduser();
+		System.out.println("Id is: "+userId);
 		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
 		signUp.setStatus(userService.updateUser(userId, getUser));
 		return ResponseEntity.ok(signUp);		

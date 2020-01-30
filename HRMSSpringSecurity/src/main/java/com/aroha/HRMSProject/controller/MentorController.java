@@ -57,7 +57,7 @@ public class MentorController {
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
 			addCandObj.setCreatedat(dateTime);
 			addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
-			return ResponseEntity.ok(addCandReq);	
+			return ResponseEntity.ok("Candidate Profile Has Been Submitted Successfully");	
 		}
 		catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());

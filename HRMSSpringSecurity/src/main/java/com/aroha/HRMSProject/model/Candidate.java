@@ -26,6 +26,10 @@ public class Candidate implements Serializable {
 	private String candemail;
 	private String fileurl;
 	private String createdat;
+	private String setstatus;
+	private String interviewername;
+	private String scheduledtime;
+
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "candidate1",
@@ -88,6 +92,30 @@ public class Candidate implements Serializable {
 
 	public void setCreatedat(String createdat) {
 		this.createdat = createdat;
+	}
+
+	public String getSetstatus() {
+		return setstatus;
+	}
+
+	public void setSetstatus(String setstatus) {
+		this.setstatus = setstatus;
+	}
+
+	public String getInterviewername() {
+		return interviewername;
+	}
+
+	public void setInterviewername(String interviewername) {
+		this.interviewername = interviewername;
+	}
+
+	public String getScheduledtime() {
+		return scheduledtime;
+	}
+
+	public void setScheduledtime(String scheduledtime) {
+		this.scheduledtime = scheduledtime;
 	}
 
 }

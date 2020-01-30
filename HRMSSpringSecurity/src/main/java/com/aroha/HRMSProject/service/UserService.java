@@ -61,6 +61,8 @@ public class UserService {
 			useObj.setPhoneNumber(user.getPhoneNumber());
 			useObj.setAddress(user.getAddress());
 			useObj.setRole(user.getRole());
+			System.out.println("Address is: "+useObj.getAddress());
+			System.out.println("Password is: "+useObj.getUserpassword());
 			userRepo.save(useObj);
 			return "User Profile is Updated Successfully";
 		}

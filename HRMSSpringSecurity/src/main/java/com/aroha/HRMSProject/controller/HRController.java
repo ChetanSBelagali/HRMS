@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class HRController {
 	@PostMapping("/CreateJobList")
 	public ResponseEntity<?> createJobListing(@RequestBody JobListing jobListing){
 		JobListing jobList=hrService.createJobListing(jobListing);
-		return ResponseEntity.ok(jobList);	
+		return ResponseEntity.ok("Job List is Added Successfully");	
 	}
 
 	//Get Job List By id
@@ -129,10 +130,29 @@ public class HRController {
 		return ResponseEntity.ok("Downloaded Successfully");
 	}
 	
+	@PostMapping("/updateFileUploader")
+	public ResponseEntity<?> updateFileUploader(@RequestBody Candidate candidate){
+		Candidate candObj=hrService.updateFileUploader(candidate);
+		return ResponseEntity.ok(candObj);		
+	}
+	
+	@GetMapping("/scheduleInterview")
+	public ResponseEntity<?> scheduleInterview(@RequestBody Candidate candidate){
+		Long objId=candidate.getCandid();
+		Candidate candObj=hrService.scheduleInterview(candidate);
+		return ResponseEntity.ok(candObj);		
+	}
+	
 	@PostMapping("/sendEmail")
 	public ResponseEntity<?> sendEmail(@RequestParam("UserEmail") String userEmail){
 		System.out.println("Email is: "+userEmail);
 		hrService.sendEmail(userEmail);
 		return ResponseEntity.ok("SUCCESS");		
+	}
+	
+	@GetMapping("/viewAllScheduledInterviews")
+	public ResponseEntity<?> viewAllScheduledInterviews(){
+		List<Candidate> listObj=hrService.viewAllScheduledInterviews();
+		return ResponseEntity.ok(listObj);		
 	}
 }
