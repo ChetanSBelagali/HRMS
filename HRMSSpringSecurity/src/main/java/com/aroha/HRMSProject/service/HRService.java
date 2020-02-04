@@ -3,6 +3,7 @@ package com.aroha.HRMSProject.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,13 @@ public class HRService {
 
 	@Autowired
 	JobListingRepository jobListingRepo;
-	
+
 	@Autowired
 	CandidateRepository candidateRepository;
-	
+
 	@Autowired
 	private JavaMailSender javaMailSender;
-	
+
 	@Autowired
 	public HRService(JavaMailSender javaMailSender) {
 		this.javaMailSender = javaMailSender;
@@ -83,9 +84,9 @@ public class HRService {
 		else {
 			return "No Record Found";
 		}
-		
+
 	}
-	
+
 	public Optional<JobListing> getJobListByJobListId(long joblistid){
 		return jobListingRepo.findById(joblistid);
 	}
@@ -116,20 +117,37 @@ public class HRService {
 		}
 	}
 
-	public void sendEmail(String userEmail) {
+	public void sendEmail(Candidate candidate) {
 		// TODO Auto-generated method stub
 		SimpleMailMessage mail = new SimpleMailMessage();
-		mail.setTo(userEmail);
-		mail.setSubject("Testing Mail API");
-		mail.setText("Hurray ! You have done that dude...");
-		System.out.println("Mail is: "+mail.getText());
+		String subjectLine="Invitation to an interview - Aroha Technologies for the position Software Engineer";
+		String message="Hello " +candidate.getCandname()+ ",\n" + 
+				"\n" + 
+				"Congrats! Your profile has been shortlisted for Software Engineer Position & F2F Interview has been scheduled for "+
+				     candidate.getScheduledtime()+"\n"+
+				"\n" + 
+				"Venue and Contact person details:"+
+				"\n"+
+				"Aroha Technologies "+
+				"\n"+
+				"5th block, Jayanagar Bangalore-560041" + 
+				"\n" + 
+				"Contact Person: "+candidate.getInterviewername()+"-"+candidate.getMobnumber()+"\n"+
+				"\n" +
+				"Note," + 
+				"\n" + 
+				"Take a printout of this mail as call letter & same profile, Any of your original ID Proof.";
+		mail.setTo(candidate.getCandemail());
+		mail.setSubject(subjectLine);
+		mail.setText(message);
+		System.out.println(mail.getText());
 
 		/*
 		 * This send() contains an Object of SimpleMailMessage as an Parameter
 		 */
 		try {
-		javaMailSender.send(mail);
-		System.out.println("Mail sent successfully");
+			javaMailSender.send(mail);
+			System.out.println("Mail sent successfully");
 		}catch(Exception ex) {System.out.println(ex.getMessage());}
 	}
 

@@ -144,9 +144,8 @@ public class HRController {
 	}
 	
 	@PostMapping("/sendEmail")
-	public ResponseEntity<?> sendEmail(@RequestParam("UserEmail") String userEmail){
-		System.out.println("Email is: "+userEmail);
-		hrService.sendEmail(userEmail);
+	public ResponseEntity<?> sendEmail(@RequestBody Candidate candidate){
+		hrService.sendEmail(candidate);
 		return ResponseEntity.ok("SUCCESS");		
 	}
 	
