@@ -100,15 +100,15 @@ public class HRController {
 		String profileURL=hrService.getProfileURLToDownloadById(candidate);
 		//File newFile=new File(profileURL);
 		Path file=Paths.get(profileURL);
-		
-		 //Tika tika = new Tika();
-		 File newfile =new File(profileURL);
-		 System.out.println("new File is: "+newfile.getCanonicalPath());
 
-		 InputStream is = new BufferedInputStream(new FileInputStream(profileURL));
+		//Tika tika = new Tika();
+		File newfile =new File(profileURL);
+		System.out.println("new File is: "+newfile.getCanonicalPath());
+
+		InputStream is = new BufferedInputStream(new FileInputStream(profileURL));
 		if(Files.exists(file)) {
 			//String mimeType = Files.probeContentType(file);
-			 //String mimeType = tika.detect(newfile);
+			//String mimeType = tika.detect(newfile);
 			String mimeType = URLConnection.guessContentTypeFromStream(is);
 			System.out.println("File is :"+file);
 			System.out.println("file mimetype:"+mimeType);
@@ -129,26 +129,26 @@ public class HRController {
 		}
 		return ResponseEntity.ok("Downloaded Successfully");
 	}
-	
+
 	@PostMapping("/updateFileUploader")
 	public ResponseEntity<?> updateFileUploader(@RequestBody Candidate candidate){
 		Candidate candObj=hrService.updateFileUploader(candidate);
 		return ResponseEntity.ok(candObj);		
 	}
-	
+
 	@GetMapping("/scheduleInterview")
 	public ResponseEntity<?> scheduleInterview(@RequestBody Candidate candidate){
-		Long objId=candidate.getCandid();
+		//Long objId=candidate.getCandid();
 		Candidate candObj=hrService.scheduleInterview(candidate);
 		return ResponseEntity.ok(candObj);		
 	}
-	
+
 	@PostMapping("/sendEmail")
 	public ResponseEntity<?> sendEmail(@RequestBody Candidate candidate){
 		hrService.sendEmail(candidate);
 		return ResponseEntity.ok("SUCCESS");		
 	}
-	
+
 	@GetMapping("/viewAllScheduledInterviews")
 	public ResponseEntity<?> viewAllScheduledInterviews(){
 		List<Candidate> listObj=hrService.viewAllScheduledInterviews();
