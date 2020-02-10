@@ -7,19 +7,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class SignUpRequest {
 	
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private User adduser;
+	private User addUser;
 	private String status;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private long roleId;
-	
-	
-	public User getAdduser() {
-		return adduser;
-	}
-	public void setAdduser(User adduser) {
-		this.adduser = adduser;
-	}
 
+
+	public User getAddUser() {
+		return addUser;
+	}
+	public void setAddUser(User addUser) {
+		this.addUser = addUser;
+	}
 	public String getStatus() {
 		return status;
 	}

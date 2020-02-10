@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class JobListing implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long joblistid;
-	private String jobdesc;
+	private long joblistId;
+	private String jobDesc;
 
 
 	//@ManyToMany(fetch = FetchType.LAZY)
@@ -32,19 +32,19 @@ public class JobListing implements Serializable {
 	@ManyToMany(mappedBy = "joblisting")
 	private Set<Candidate> candidate=new HashSet<>();
 
-	public long getJoblistid() {
-		return joblistid;
-	}
-	public void setJoblistid(long joblistid) {
-		this.joblistid = joblistid;
-	}
-	public String getJobdesc() {
-		return jobdesc;
-	}
-	public void setJobdesc(String jobdesc) {
-		this.jobdesc = jobdesc;
-	}
 	
+	public long getJoblistId() {
+		return joblistId;
+	}
+	public void setJoblistId(long joblistId) {
+		this.joblistId = joblistId;
+	}
+	public String getJobDesc() {
+		return jobDesc;
+	}
+	public void setJobDesc(String jobDesc) {
+		this.jobDesc = jobDesc;
+	}
 	@JsonIgnore
 	public Set<Candidate> getCandidate() {
 		return candidate;

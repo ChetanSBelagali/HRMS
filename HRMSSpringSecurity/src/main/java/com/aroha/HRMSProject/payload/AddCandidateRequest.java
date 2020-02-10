@@ -6,7 +6,7 @@ public class AddCandidateRequest {
 	
 	private Candidate addCandidate;
 	private String status;
-	private long joblistid;
+	private long joblistId;
 	public Candidate getAddCandidate() {
 		return addCandidate;
 	}
@@ -19,12 +19,13 @@ public class AddCandidateRequest {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public long getJoblistid() {
-		return joblistid;
+	public long getJoblistId() {
+		return joblistId;
 	}
-	public void setJoblistid(long joblistid) {
-		this.joblistid = joblistid;
+	public void setJoblistId(long joblistId) {
+		this.joblistId = joblistId;
 	}
+
 
 	
 }

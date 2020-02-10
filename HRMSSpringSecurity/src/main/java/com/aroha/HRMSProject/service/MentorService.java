@@ -26,7 +26,7 @@ public class MentorService {
 		System.out.println("Job List id is: "+jobListId);
 		if(jobListObj.isPresent()) {
 			JobListing candObj=jobListObj.get();
-			System.out.println("Cand Details: "+candObj.getJobdesc());
+			System.out.println("Cand Details: "+candObj.getJobDesc());
 			addCandObj.getJoblisting().add(candObj);
 			candidateRepository.save(addCandObj);
 			return "Candidate is saved";
@@ -39,7 +39,7 @@ public class MentorService {
 	}
 
 	public Candidate getFileUploaderCandById(long candid) {
-		Optional<Candidate> fileUpObj=candidateRepository.findBycandid(candid);
+		Optional<Candidate> fileUpObj=candidateRepository.findBycandId(candid);
 		if(fileUpObj.isPresent()) {
 			return fileUpObj.get();
 		}

@@ -16,28 +16,29 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Role {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long roleid;
-	private String rolename;
+	private long roleId;
+	private String roleName;
 	
 	@ManyToMany(mappedBy = "role")
 	private Set<User> users=new HashSet<>();
 
-	public long getRoleid() {
-		return roleid;
-	}
-
-	public void setRoleid(long roleid) {
-		this.roleid = roleid;
-	}
-
-	public String getRolename() {
-		return rolename;
-	}
-
-	public void setRolename(String rolename) {
-		this.rolename = rolename;
-	}
 	
+	public long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(long roleId) {
+		this.roleId = roleId;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
 	@JsonIgnore
 	public Set<User> getUsers() {
 		return users;

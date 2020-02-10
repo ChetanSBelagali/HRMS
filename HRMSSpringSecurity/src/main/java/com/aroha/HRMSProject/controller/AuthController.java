@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.aroha.HRMSProject.model.User;
+import com.aroha.HRMSProject.payload.ForgetPassword;
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
 import com.aroha.HRMSProject.payload.LoginRequest;
 import com.aroha.HRMSProject.payload.SignUpRequest;
@@ -56,10 +57,10 @@ public class AuthController {
 		User user=userService.getuser(loginRequest.getUsernameOrEmail()).get();
 		jwtObj.setTokenType("Bearer");
 		jwtObj.setAccessToken(jwt);
-		jwtObj.setId(user.getUserid());
-		jwtObj.setName(user.getUsername());
+		jwtObj.setId(user.getUserId());
+		jwtObj.setName(user.getUserName());
 		jwtObj.setRoles(authentication.getAuthorities());
-		jwtObj.setUsername(user.getUseremail());
+		jwtObj.setUsername(user.getUserEmail());
 		//return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 		return ResponseEntity.ok(jwtObj);
 	}
@@ -68,8 +69,8 @@ public class AuthController {
 	@PostMapping("/addUsers")
 	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
 		Long roleId=signUp.getRoleId();
-		User getUser=signUp.getAdduser();
-		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
+		User getUser=signUp.getAddUser();
+		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
 		signUp.setStatus(userService.addUser(roleId, getUser));
 		return ResponseEntity.ok(signUp);
 	}
@@ -79,14 +80,14 @@ public class AuthController {
 	public ResponseEntity<?> getAllUsers(){
 		return ResponseEntity.ok(userService.getAllUser());	
 	}
-	
+
 	//Update Users
 	@PostMapping("/updateUserInRoles")
 	public ResponseEntity<?> updateUserInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
-		Long userId=signUp.getAdduser().getUserid();
-		User getUser=signUp.getAdduser();
+		Long userId=signUp.getAddUser().getUserId();
+		User getUser=signUp.getAddUser();
 		System.out.println("Id is: "+userId);
-		getUser.setUserpassword(passwordEncoder.encode(signUp.getAdduser().getUserpassword()));
+		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
 		signUp.setStatus(userService.updateUser(userId, getUser));
 		return ResponseEntity.ok(signUp);		
 	}
@@ -96,5 +97,25 @@ public class AuthController {
 	public ResponseEntity<?> deleteUserInRoles(@PathVariable("id") long id){
 		String result=userService.deleteUserInRoles(id);
 		return ResponseEntity.ok(result);		
+	}
+
+	@PostMapping("/ForgotPassword")
+	public ResponseEntity<?> forgotPassword(@RequestBody LoginRequest loginRequest){
+		boolean isExists=userService.checkUserEmail(loginRequest.getUsernameOrEmail());
+		if(!isExists){
+			return ResponseEntity.ok(loginRequest.getUsernameOrEmail()+" does not exists");
+		}
+		else {
+			boolean isTrue=userService.forgotPassword(loginRequest.getUsernameOrEmail());
+			if(isTrue) {
+				return ResponseEntity.ok("OTP sent to registered emailId");
+			}
+		}
+		return ResponseEntity.ok("Failed to send the email");		
+	}
+
+	@PostMapping("/UpdatePassword")
+	public ResponseEntity<?> updatePassword(@RequestBody ForgetPassword password){
+		return ResponseEntity.ok(userService.updatePassword(password));	
 	}
 }

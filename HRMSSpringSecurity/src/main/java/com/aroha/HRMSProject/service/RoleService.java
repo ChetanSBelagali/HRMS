@@ -18,7 +18,7 @@ public class RoleService {
 
 	public String saveRole(Role newRole) {
 		
-		Boolean isExists=roleRepo.existsByrolename(newRole.getRolename());
+		Boolean isExists=roleRepo.existsByroleName(newRole.getRoleName());
 		if(isExists) {
 			return "Role is already present";
 		}else {

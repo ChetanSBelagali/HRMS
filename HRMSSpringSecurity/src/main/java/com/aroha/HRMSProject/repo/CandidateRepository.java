@@ -13,19 +13,19 @@ import com.aroha.HRMSProject.payload.AddCandidateRequest;
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate, Long>{
 
-	Optional<Candidate> findBycandid(long candid);
+	Optional<Candidate> findBycandId(long candId);
 
 
 //	List<Candidate> findAllByjoblistid(long joblistId);/
 	
-	@Query(value="select * from candidate1 where joblistid=?1",nativeQuery = true)
+	@Query(value="select * from candidate1 where joblistId=?1",nativeQuery = true)
 	List<Long> getByJobListId(long joblistId);
 	
-	@Query(value="select * from candidate where setstatus='Accept'", nativeQuery=true)
+	@Query(value="select * from candidate where setStatus='Accept'", nativeQuery=true)
 	List<Candidate> getAllScheduledInterviews();
 
 
-	Boolean existsBycandid(long candid);
+	Boolean existsBycandId(long candId);
 
 
 }

@@ -45,17 +45,17 @@ public class MentorController {
 		ObjectMapper mapper=new ObjectMapper();
 		try {
 			AddCandidateRequest addCandReq=mapper.readValue(model, AddCandidateRequest.class);
-			long jobListId=addCandReq.getJoblistid();
+			long jobListId=addCandReq.getJoblistId();
 			Candidate addCandObj=addCandReq.getAddCandidate();
 			byte[] data=file.getBytes();
 			int index=file.getOriginalFilename().indexOf(".");
 			String fileName=file.getOriginalFilename().substring(0,index);
-			OutputStream output=new FileOutputStream(new File(filePath+"/"+addCandObj.getCandemail()+"-"+fileName));
+			OutputStream output=new FileOutputStream(new File(filePath+"/"+addCandObj.getCandEmail()+"-"+fileName));
 			output.write(data);
-			Path path=Paths.get(filePath+"/"+addCandObj.getCandemail()+"-"+fileName);
-			addCandObj.setFileurl(path.toString());
+			Path path=Paths.get(filePath+"/"+addCandObj.getCandEmail()+"-"+fileName);
+			addCandObj.setFileUrl(path.toString());
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
-			addCandObj.setCreatedat(dateTime);
+			addCandObj.setCreatedAt(dateTime);
 			addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
 			return ResponseEntity.ok("Candidate Profile Has Been Submitted Successfully");	
 		}
@@ -67,8 +67,8 @@ public class MentorController {
 	//Get FileUploader By ID
 	@GetMapping("/getFileUpCandById")
 	public ResponseEntity<?> getFileUploaderCandById(@RequestBody Candidate candidate){
-		System.out.println("Id is: "+candidate.getCandid());
-		Candidate getFileUpDetailsObj=mentorService.getFileUploaderCandById(candidate.getCandid());
+		System.out.println("Id is: "+candidate.getCandId());
+		Candidate getFileUpDetailsObj=mentorService.getFileUploaderCandById(candidate.getCandId());
 		return ResponseEntity.ok(getFileUpDetailsObj);		
 	}
 

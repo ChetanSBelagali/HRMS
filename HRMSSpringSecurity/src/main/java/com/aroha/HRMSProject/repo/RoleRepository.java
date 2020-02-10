@@ -7,5 +7,5 @@ import com.aroha.HRMSProject.model.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-	Boolean existsByrolename(String roleName);
+	Boolean existsByroleName(String roleName);
 }

@@ -20,21 +20,21 @@ public class Candidate implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private long candid;
-	private String candname;
-	private String mobnumber;
-	private String candemail;
-	private String fileurl;
-	private String createdat;
-	private String setstatus;
-	private String interviewername;
-	private String scheduledtime;
+	private long candId;
+	private String candName;
+	private String mobNumber;
+	private String candEmail;
+	private String fileUrl;
+	private String createdAt;
+	private String setStatus;
+	private String interviewerName;
+	private String scheduledTime;
 
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "candidate1",
-	joinColumns = @JoinColumn(name = "candid"),
-	inverseJoinColumns = @JoinColumn(name = "joblistid"))
+	joinColumns = @JoinColumn(name = "candId"),
+	inverseJoinColumns = @JoinColumn(name = "joblistId"))
 	private Set<JobListing> joblisting=new HashSet<>();
 
 	@JsonIgnore
@@ -46,76 +46,76 @@ public class Candidate implements Serializable {
 		this.joblisting = joblisting;
 	}
 
-	public long getCandid() {
-		return candid;
+	public long getCandId() {
+		return candId;
 	}
 
-	public void setCandid(long candid) {
-		this.candid = candid;
+	public void setCandId(long candId) {
+		this.candId = candId;
 	}
 
-	public String getCandname() {
-		return candname;
+	public String getCandName() {
+		return candName;
 	}
 
-	public void setCandname(String candname) {
-		this.candname = candname;
+	public void setCandName(String candName) {
+		this.candName = candName;
 	}
 
-	public String getMobnumber() {
-		return mobnumber;
+	public String getMobNumber() {
+		return mobNumber;
 	}
 
-	public void setMobnumber(String mobnumber) {
-		this.mobnumber = mobnumber;
+	public void setMobNumber(String mobNumber) {
+		this.mobNumber = mobNumber;
 	}
 
-	public String getCandemail() {
-		return candemail;
+	public String getCandEmail() {
+		return candEmail;
 	}
 
-	public void setCandemail(String candemail) {
-		this.candemail = candemail;
+	public void setCandEmail(String candEmail) {
+		this.candEmail = candEmail;
 	}
 
-	public String getFileurl() {
-		return fileurl;
+	public String getFileUrl() {
+		return fileUrl;
 	}
 
-	public void setFileurl(String fileurl) {
-		this.fileurl = fileurl;
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
 	}
 
-	public String getCreatedat() {
-		return createdat;
+	public String getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreatedat(String createdat) {
-		this.createdat = createdat;
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public String getSetstatus() {
-		return setstatus;
+	public String getSetStatus() {
+		return setStatus;
 	}
 
-	public void setSetstatus(String setstatus) {
-		this.setstatus = setstatus;
+	public void setSetStatus(String setStatus) {
+		this.setStatus = setStatus;
 	}
 
-	public String getInterviewername() {
-		return interviewername;
+	public String getInterviewerName() {
+		return interviewerName;
 	}
 
-	public void setInterviewername(String interviewername) {
-		this.interviewername = interviewername;
+	public void setInterviewerName(String interviewerName) {
+		this.interviewerName = interviewerName;
 	}
 
-	public String getScheduledtime() {
-		return scheduledtime;
+	public String getScheduledTime() {
+		return scheduledTime;
 	}
 
-	public void setScheduledtime(String scheduledtime) {
-		this.scheduledtime = scheduledtime;
+	public void setScheduledTime(String scheduledTime) {
+		this.scheduledTime = scheduledTime;
 	}
 
 }

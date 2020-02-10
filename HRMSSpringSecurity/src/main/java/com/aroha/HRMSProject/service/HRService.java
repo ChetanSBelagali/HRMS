@@ -41,8 +41,8 @@ public class HRService {
 		return jobListingRepo.save(jobListing);
 	}
 
-	public JobListing getJobListById(long joblistid) {
-		Optional<JobListing> JobListObj=jobListingRepo.findByjoblistid(joblistid);
+	public JobListing getJobListById(long joblistId) {
+		Optional<JobListing> JobListObj=jobListingRepo.findByjoblistId(joblistId);
 		if(JobListObj.isPresent()) {
 			return JobListObj.get();
 		}
@@ -51,11 +51,11 @@ public class HRService {
 	}
 
 	public JobListing updateJobList(JobListing jobListing) {
-		Optional<JobListing> jobListId=jobListingRepo.findByjoblistid(jobListing.getJoblistid());
+		Optional<JobListing> jobListId=jobListingRepo.findByjoblistId(jobListing.getJoblistId());
 		System.out.println("Here Job List Id is: "+jobListId);
 		if(jobListId.isPresent()) {
 			JobListing joblistingObj=jobListId.get();
-			joblistingObj.setJobdesc(jobListing.getJobdesc());
+			joblistingObj.setJobDesc(jobListing.getJobDesc());
 			return jobListingRepo.save(joblistingObj);
 		}
 		else {
@@ -74,9 +74,9 @@ public class HRService {
 	}
 
 	public String deleteJobListById(JobListing jobListing) {
-		Optional<JobListing> joblistid=jobListingRepo.findByjoblistid(jobListing.getJoblistid());
+		Optional<JobListing> joblistid=jobListingRepo.findByjoblistId(jobListing.getJoblistId());
 		// TODO Auto-generated method stub
-		long id=jobListing.getJoblistid();
+		long id=jobListing.getJoblistId();
 		if(joblistid.isPresent()) {
 			jobListingRepo.deleteById(id);
 			return "JobListing Deleted Successfully";
@@ -106,10 +106,10 @@ public class HRService {
 
 	public String getProfileURLToDownloadById(Candidate candidate) {
 		// TODO Auto-generated method stub
-		Optional<Candidate> candid=candidateRepository.findBycandid(candidate.getCandid());
+		Optional<Candidate> candid=candidateRepository.findBycandId(candidate.getCandId());
 		if(candid.isPresent()) {
 			Candidate candObj=candid.get();
-			String URL=candObj.getFileurl();
+			String URL=candObj.getFileUrl();
 			return URL;
 		}
 		else {
@@ -121,10 +121,10 @@ public class HRService {
 		// TODO Auto-generated method stub
 		SimpleMailMessage mail = new SimpleMailMessage();
 		String subjectLine="Invitation to an interview - Aroha Technologies for the position Software Engineer";
-		String message="Hello " +candidate.getCandname()+ ",\n" + 
+		String message="Hello " +candidate.getCandName()+ ",\n" + 
 				"\n" + 
 				"Congrats! Your profile has been shortlisted for Software Engineer Position & F2F Interview has been scheduled for "+
-				     candidate.getScheduledtime()+"\n"+
+				     candidate.getScheduledTime()+"\n"+
 				"\n" + 
 				"Venue and Contact person details:"+
 				"\n"+
@@ -132,12 +132,12 @@ public class HRService {
 				"\n"+
 				"5th block, Jayanagar Bangalore-560041" + 
 				"\n" + 
-				"Contact Person: "+candidate.getInterviewername()+"-"+candidate.getMobnumber()+"\n"+
+				"Contact Person: "+candidate.getInterviewerName()+"-"+candidate.getMobNumber()+"\n"+
 				"\n" +
 				"Note," + 
 				"\n" + 
 				"Take a printout of this mail as call letter & same profile, Any of your original ID Proof.";
-		mail.setTo(candidate.getCandemail());
+		mail.setTo(candidate.getCandEmail());
 		mail.setSubject(subjectLine);
 		mail.setText(message);
 		System.out.println(mail.getText());
@@ -152,19 +152,19 @@ public class HRService {
 	}
 
 	public Candidate updateFileUploader(Candidate candidate) {
-		Optional<Candidate> candId=candidateRepository.findBycandid(candidate.getCandid());
+		Optional<Candidate> candId=candidateRepository.findBycandId(candidate.getCandId());
 		if(candId.isPresent()) {
 			Candidate candObj=candId.get();
-			candObj.setSetstatus(candidate.getSetstatus());
-			candObj.setInterviewername(candidate.getInterviewername());
-			candObj.setScheduledtime(candidate.getScheduledtime());
+			candObj.setSetStatus(candidate.getSetStatus());
+			candObj.setInterviewerName(candidate.getInterviewerName());
+			candObj.setScheduledTime(candidate.getScheduledTime());
 			return candidateRepository.save(candObj);
 		}
 		return candidateRepository.save(candidate);		
 	}
 
 	public Candidate scheduleInterview(Candidate candidate) {
-		Optional<Candidate> candObj=candidateRepository.findBycandid(candidate.getCandid());
+		Optional<Candidate> candObj=candidateRepository.findBycandId(candidate.getCandId());
 		if(candObj.isPresent()) {
 			return candObj.get();
 		}

@@ -52,7 +52,7 @@ public class HRController {
 	//Get Job List By id
 	@GetMapping("/getJobListById")
 	public ResponseEntity<?> getJobListById(@RequestBody JobListing jobListing){
-		JobListing getJobListObj=hrService.getJobListById(jobListing.getJoblistid());
+		JobListing getJobListObj=hrService.getJobListById(jobListing.getJoblistId());
 		return ResponseEntity.ok(getJobListObj);	
 	}
 
@@ -81,7 +81,7 @@ public class HRController {
 	//Get Uploaded Profiles For Particular Job
 	@GetMapping("/getUploadedProfilesForPerticularJob")
 	public ResponseEntity<?> getUploadedProfilesForPerticularJob(@RequestBody JobListing joblisting){
-		long joblistId=joblisting.getJoblistid();
+		long joblistId=joblisting.getJoblistId();
 		if(hrService.getUploadedProfilesForPerticularJob(joblistId).isEmpty()) {
 			return ResponseEntity.ok("No candicate found for that job");
 		}

@@ -8,8 +8,8 @@ import com.aroha.HRMSProject.model.JobListing;
 
 public interface JobListingRepository extends JpaRepository<JobListing, Long>{
 	
-	Optional<JobListing> findByjoblistid(long joblistid);
+	Optional<JobListing> findByjoblistId(long joblistId);
 
-	Optional<JobListing> deleteByJoblistid(long jobListId);
+	Optional<JobListing> deleteByJoblistId(long jobListId);
 
 }

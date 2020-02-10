@@ -10,10 +10,10 @@ import com.aroha.HRMSProject.model.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
 	
-	Optional<User> findByuseremail(String useremail);
+	Optional<User> findByuserEmail(String userEmail);
 	
-	Optional<User> findByuserid(Long userid);
+	Optional<User> findByuserId(Long userId);
 	
-	Boolean existsByuseremail(String useremail);
+	Boolean existsByuserEmail(String userEmail);
 
 }
