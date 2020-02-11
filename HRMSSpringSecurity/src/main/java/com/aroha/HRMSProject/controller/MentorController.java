@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.payload.AddCandidateRequest;
+import com.aroha.HRMSProject.payload.AddCandidateResponse;
 import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.UserPrincipal;
 import com.aroha.HRMSProject.service.MentorService;
@@ -56,8 +57,9 @@ public class MentorController {
 			addCandObj.setFileUrl(path.toString());
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
 			addCandObj.setCreatedAt(dateTime);
-			addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
-			return ResponseEntity.ok("Candidate Profile Has Been Submitted Successfully");	
+			//addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
+			AddCandidateResponse addCandResponse=mentorService.createNewFileUploader(jobListId, addCandObj);
+			return ResponseEntity.ok(addCandResponse);	
 		}
 		catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());

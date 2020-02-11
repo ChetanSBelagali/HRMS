@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.payload.ForgetPassword;
+import com.aroha.HRMSProject.payload.SignUpResponse;
 import com.aroha.HRMSProject.repo.UserRepository;
 
 @Service
@@ -37,11 +38,14 @@ public class UserService {
 		return userRepo.findByuserEmail(userNameOrEmail);
 	}
 
-	public String addUser(long roleId,User user) {
+	public SignUpResponse addUser(long roleId,User user) {
 		Boolean isExists=userRepo.existsByuserEmail(user.getUserEmail());
+		SignUpResponse signUpResponse=new SignUpResponse();
 		System.out.println("IsExists :"+isExists);
 		if(isExists) {
-			return "User with "+user.getUserEmail()+" already exists";
+			signUpResponse.setResult("User Already Exists");
+			signUpResponse.setStatus("Fail");
+			return signUpResponse;
 		}else {
 			//Optional<User> userObj=userRepo.findByuseremail(user.getUseremail());
 			//User userData=userObj.get();
@@ -51,10 +55,15 @@ public class UserService {
 				Role roleObj=role.get();
 				user.getRole().add(roleObj);
 				userRepo.save(user);
-				return "User is Saved";
+				signUpResponse.setResult("User is Saved");
+				signUpResponse.setStatus("Success");
+				
+				return signUpResponse;
 			}
 			else {
-				return "Role is not Present";
+				signUpResponse.setResult("Something Went Wrong");
+				signUpResponse.setStatus("Fail");
+				return signUpResponse;
 			}
 		}
 	}
@@ -173,7 +182,7 @@ public class UserService {
 			}
 		}else {
 			//logger.error("OTP didn't matched");
-			return "OTP did not matched";
+			return "OTP did not match";
 		}		
 	}
 }

@@ -8,6 +8,8 @@ import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aroha.HRMSProject.exception.FileNotFoundException;
+import com.aroha.HRMSProject.exception.RecordNotFoundException;
 import com.aroha.HRMSProject.exception.ResourceNotFoundException;
 import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.model.JobListing;
@@ -47,7 +49,7 @@ public class HRService {
 			return JobListObj.get();
 		}
 		else
-			return null;
+			throw new RecordNotFoundException("Not Found");
 	}
 
 	public JobListing updateJobList(JobListing jobListing) {
@@ -168,7 +170,7 @@ public class HRService {
 		if(candObj.isPresent()) {
 			return candObj.get();
 		}
-		return null;		
+		throw new RecordNotFoundException("Not Found");		
 	}
 
 	public List<Candidate> viewAllScheduledInterviews() {
@@ -176,7 +178,7 @@ public class HRService {
 		if(allInterviews.size()>0) {
 			return allInterviews;
 		}
-		return null;		
+		throw new FileNotFoundException("Not Found");		
 	}	
 }
 

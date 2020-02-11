@@ -19,6 +19,7 @@ import com.aroha.HRMSProject.payload.ForgetPassword;
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
 import com.aroha.HRMSProject.payload.LoginRequest;
 import com.aroha.HRMSProject.payload.SignUpRequest;
+import com.aroha.HRMSProject.payload.SignUpResponse;
 import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.JwtTokenProvider;
 import com.aroha.HRMSProject.security.UserPrincipal;
@@ -71,8 +72,9 @@ public class AuthController {
 		Long roleId=signUp.getRoleId();
 		User getUser=signUp.getAddUser();
 		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
-		signUp.setStatus(userService.addUser(roleId, getUser));
-		return ResponseEntity.ok(signUp);
+		//SignUpResponse result =signUp.setStatus(userService.addUser(roleId, getUser));
+		SignUpResponse signUpResponse=userService.addUser(roleId, getUser);
+		return ResponseEntity.ok(signUpResponse);
 	}
 
 	//Get All Users
