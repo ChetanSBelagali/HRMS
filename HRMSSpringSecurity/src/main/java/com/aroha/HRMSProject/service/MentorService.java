@@ -28,17 +28,19 @@ public class MentorService {
 		Optional<JobListing> jobListObj=hrService.getJobListByJobListId(jobListId);
 		AddCandidateResponse addCandResponse=new AddCandidateResponse();
 		System.out.println("Job List id is: "+jobListId);
+		boolean status=true;
 		if(jobListObj.isPresent()) {
 			JobListing candObj=jobListObj.get();
 			System.out.println("Cand Details: "+candObj.getJobDesc());
 			addCandObj.getJoblisting().add(candObj);
 			candidateRepository.save(addCandObj);
 			addCandResponse.setResult("Candidate is Saved");
-			addCandResponse.setStatus("Success");
+			addCandResponse.setStatus(true);
 			return addCandResponse;
 		}else {
 			addCandResponse.setResult("Job List is Not Present");
-			addCandResponse.setStatus("Fail");
+			status=false;
+			addCandResponse.setStatus(status);
 			return addCandResponse;
 		}
 	}

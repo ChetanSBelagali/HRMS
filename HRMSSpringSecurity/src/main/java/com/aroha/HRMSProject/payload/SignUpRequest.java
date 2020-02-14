@@ -1,5 +1,6 @@
 package com.aroha.HRMSProject.payload;
 
+import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,7 +11,7 @@ public class SignUpRequest {
 	private User addUser;
 	private String status;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private long roleId;
+	private Role role;
 
 
 	public User getAddUser() {
@@ -25,12 +26,13 @@ public class SignUpRequest {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-	public long getRoleId() {
-		return roleId;
+	public Role getRole() {
+		return role;
 	}
-	public void setRoleId(long roleId) {
-		this.roleId = roleId;
+	public void setRole(Role role) {
+		this.role = role;
 	}
+
 	
 	
 }

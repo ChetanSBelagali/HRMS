@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
+import com.aroha.HRMSProject.payload.Data;
 import com.aroha.HRMSProject.payload.ForgetPassword;
 import com.aroha.HRMSProject.payload.SignUpResponse;
 import com.aroha.HRMSProject.repo.UserRepository;
@@ -41,10 +42,13 @@ public class UserService {
 	public SignUpResponse addUser(long roleId,User user) {
 		Boolean isExists=userRepo.existsByuserEmail(user.getUserEmail());
 		SignUpResponse signUpResponse=new SignUpResponse();
+		Data d=new Data();
 		System.out.println("IsExists :"+isExists);
+		Boolean status=false;
 		if(isExists) {
-			signUpResponse.setResult("User Already Exists");
-			signUpResponse.setStatus("Fail");
+			d.setResult("User Already Exists");
+			signUpResponse.setData(d);
+			signUpResponse.setStatus(status);
 			return signUpResponse;
 		}else {
 			//Optional<User> userObj=userRepo.findByuseremail(user.getUseremail());
@@ -55,14 +59,17 @@ public class UserService {
 				Role roleObj=role.get();
 				user.getRole().add(roleObj);
 				userRepo.save(user);
-				signUpResponse.setResult("User is Saved");
-				signUpResponse.setStatus("Success");
+				d.setResult("User is Saved");
+				signUpResponse.setData(d);
+				status=true;
+				signUpResponse.setStatus(status);
 				
 				return signUpResponse;
 			}
 			else {
-				signUpResponse.setResult("Something Went Wrong");
-				signUpResponse.setStatus("Fail");
+				d.setResult("Something Went Wrong");
+				signUpResponse.setData(d);
+				signUpResponse.setStatus(status);
 				return signUpResponse;
 			}
 		}

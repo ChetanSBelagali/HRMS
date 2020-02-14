@@ -69,7 +69,8 @@ public class AuthController {
 	//Add Users
 	@PostMapping("/addUsers")
 	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
-		Long roleId=signUp.getRoleId();
+		
+		Long roleId=signUp.getRole().getRoleId();
 		User getUser=signUp.getAddUser();
 		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
 		//SignUpResponse result =signUp.setStatus(userService.addUser(roleId, getUser));
