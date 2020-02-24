@@ -1,7 +1,12 @@
 package com.aroha.HRMSProject.service;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -9,17 +14,30 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.aroha.HRMSProject.model.Role;
+import com.aroha.HRMSProject.model.RoleName;
 import com.aroha.HRMSProject.model.User;
-import com.aroha.HRMSProject.payload.Data;
+import com.aroha.HRMSProject.payload.AddUserRequest;
+import com.aroha.HRMSProject.payload.AddUserResponse;
 import com.aroha.HRMSProject.payload.ForgetPassword;
-import com.aroha.HRMSProject.payload.SignUpResponse;
+import com.aroha.HRMSProject.payload.UpdateAddUserRequest;
+import com.aroha.HRMSProject.payload.UpdateAddUserResponse;
+import com.aroha.HRMSProject.repo.RoleRepository;
 import com.aroha.HRMSProject.repo.UserRepository;
+import com.aroha.HRMSProject.security.CurrentUser;
+import com.aroha.HRMSProject.security.UserPrincipal;
+import com.aroha.HRMSProject.exception.AppException;
 
 @Service
 public class UserService {
 
 	@Autowired
 	private UserRepository userRepo;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private RoleRepository roleRepo;
 
 
 	@Autowired
@@ -39,66 +57,8 @@ public class UserService {
 		return userRepo.findByuserEmail(userNameOrEmail);
 	}
 
-	public SignUpResponse addUser(long roleId,User user) {
-		Boolean isExists=userRepo.existsByuserEmail(user.getUserEmail());
-		SignUpResponse signUpResponse=new SignUpResponse();
-		Data d=new Data();
-		System.out.println("IsExists :"+isExists);
-		Boolean status=false;
-		if(isExists) {
-			d.setResult("User Already Exists");
-			signUpResponse.setData(d);
-			signUpResponse.setStatus(status);
-			return signUpResponse;
-		}else {
-			//Optional<User> userObj=userRepo.findByuseremail(user.getUseremail());
-			//User userData=userObj.get();
-			Optional<Role> role=roleService.findRole(roleId);
-			System.out.println("RoleId: "+roleId);
-			if(role.isPresent()) {
-				Role roleObj=role.get();
-				user.getRole().add(roleObj);
-				userRepo.save(user);
-				d.setResult("User is Saved");
-				signUpResponse.setData(d);
-				status=true;
-				signUpResponse.setStatus(status);
-				
-				return signUpResponse;
-			}
-			else {
-				d.setResult("Something Went Wrong");
-				signUpResponse.setData(d);
-				signUpResponse.setStatus(status);
-				return signUpResponse;
-			}
-		}
-	}
-
-
 	public List<User> getAllUser(){
-		return userRepo.findAll();
-
-	}
-
-	public String updateUser(Long userid, User user) {
-		Optional<User> userId=userRepo.findByuserId(userid);
-		if(userId.isPresent()) {
-			User useObj=userId.get();
-			useObj.setUserName(user.getUserName());
-			useObj.setUserEmail(user.getUserEmail());
-			useObj.setUserPassword(user.getUserPassword());
-			useObj.setPhoneNumber(user.getPhoneNumber());
-			useObj.setAddress(user.getAddress());
-			useObj.setRole(user.getRole());
-			System.out.println("Address is: "+useObj.getAddress());
-			System.out.println("Password is: "+useObj.getUserPassword());
-			userRepo.save(useObj);
-			return "User Profile is Updated Successfully";
-		}
-		else {
-			return "Something Went Wrong";
-		}	
+		return userRepo.findAll();		 
 	}
 
 	public String deleteUserInRoles(Long userId) {
@@ -192,4 +152,81 @@ public class UserService {
 			return "OTP did not match";
 		}		
 	}
+
+	public AddUserResponse newUser(AddUserRequest addUserReq, UserPrincipal currentUser) {
+
+		Boolean isExists=userRepo.existsByuserEmail(addUserReq.getUserEmail());
+		AddUserResponse addUserRes=new AddUserResponse();
+		System.out.println("IsExists :"+isExists);
+		Boolean status=false;
+		if(isExists) {
+			addUserRes.setStatus(status);
+			addUserRes.setResult("User Already Exists");
+			return addUserRes;
+		}
+		else {
+			long getRoleId=0;
+			Set<Role>r=addUserReq.getRole();
+			Iterator<Role>itr=r.iterator();
+			while(itr.hasNext()) {
+				Role robj=itr.next();
+				getRoleId=robj.getRoleId();
+			}
+			Optional<Role> role=roleService.findRole(getRoleId);
+			//System.out.println("RoleId: "+roleId);
+			User user = new User();
+			if(role.isPresent()) {
+				Role roleObj=role.get();
+				user.getRole().add(roleObj);
+				user.setUserName(addUserReq.getUserName());
+				user.setUserEmail(addUserReq.getUserEmail());
+				user.setPhoneNumber(addUserReq.getPhoneNumber());
+				user.setAddress(addUserReq.getAddress());
+				user.setUserPassword(passwordEncoder.encode(addUserReq.getUserPassword()));
+				System.out.println("Role is: "+user.getRole());
+				userRepo.save(user);
+				status=true;
+				addUserRes.setStatus(status);
+				addUserRes.setResult("User Saved Successfully");
+				return addUserRes;
+			}
+		}
+		status=false;
+		addUserRes.setStatus(status);
+		addUserRes.setResult("Something Went Wrong");
+		return addUserRes;
+	}
+
+	public List<User> findByRole(String roleName) {
+		return userRepo.findByRole(roleName);
+	}
+
+	public Optional<Role> findByRoleName(RoleName roleName) {
+		return roleRepo.findByRoleName(roleName);
+	}
+
+	public UpdateAddUserResponse updateNewUser(UpdateAddUserRequest updateAddUserReq, UserPrincipal currentUser) {
+		// TODO Auto-generated method stub
+		boolean status=false;
+		UpdateAddUserResponse updateAddUserResponse=new UpdateAddUserResponse();
+		Optional<User> userID=userRepo.findByuserId(updateAddUserReq.getUserId());
+		if(userID.isPresent()) {
+			User userObj=userID.get();
+			userObj.setUserName(updateAddUserReq.getUserName());
+			userObj.setUserEmail(updateAddUserReq.getUserEmail());
+			userObj.setPhoneNumber(updateAddUserReq.getPhoneNumber());
+			userObj.setAddress(updateAddUserReq.getAddress());
+			userObj.setUserPassword(passwordEncoder.encode(updateAddUserReq.getUserPassword()));
+			userRepo.save(userObj);
+			status=true;
+			updateAddUserResponse.setStatus(status);
+			updateAddUserResponse.setResult("User Updated Successfully");
+			return updateAddUserResponse;
+		}
+		status=false;
+		updateAddUserResponse.setStatus(status);
+		updateAddUserResponse.setResult("User Id is not Present");
+		return updateAddUserResponse;
+	}
+
 }

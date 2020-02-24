@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.aroha.HRMSProject.model.Candidate;
-import com.aroha.HRMSProject.payload.AddCandidateRequest;
 
 @Repository
 public interface CandidateRepository extends JpaRepository<Candidate, Long>{
@@ -21,7 +20,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long>{
 	@Query(value="select * from candidate1 where joblistId=?1",nativeQuery = true)
 	List<Long> getByJobListId(long joblistId);
 	
-	@Query(value="select * from candidate where setStatus='Accept'", nativeQuery=true)
+	@Query(value="select * from candidate where set_Status='Accept'", nativeQuery=true)
 	List<Candidate> getAllScheduledInterviews();
 
 

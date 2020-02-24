@@ -33,6 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aroha.HRMSProject.config.FileConfig;
 import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.model.JobListing;
+import com.aroha.HRMSProject.payload.AcceptorRejectProfileResponse;
+import com.aroha.HRMSProject.payload.CreateJobListResponse;
+import com.aroha.HRMSProject.payload.DeleteJobListResponse;
+import com.aroha.HRMSProject.payload.SendEmailResponse;
+import com.aroha.HRMSProject.payload.UpdateJobListResponse;
 import com.aroha.HRMSProject.service.HRService;
 
 @RestController
@@ -45,8 +50,8 @@ public class HRController {
 	//Create Job List
 	@PostMapping("/CreateJobList")
 	public ResponseEntity<?> createJobListing(@RequestBody JobListing jobListing){
-		JobListing jobList=hrService.createJobListing(jobListing);
-		return ResponseEntity.ok("Job List is Added Successfully");	
+		CreateJobListResponse createJoblistRes=hrService.createJobListing(jobListing);
+		return ResponseEntity.ok(createJoblistRes);	
 	}
 
 	//Get Job List By id
@@ -59,8 +64,8 @@ public class HRController {
 	//Update Job List
 	@PostMapping("/UpdateJobList")
 	public ResponseEntity<?> updateJobListing(@RequestBody JobListing jobListing){
-		JobListing getUpdatedJobListObj=hrService.updateJobList(jobListing);
-		return ResponseEntity.ok("Job Description Updated Successfully");		
+		UpdateJobListResponse updateJobListRes=hrService.updateJobList(jobListing);
+		return ResponseEntity.ok(updateJobListRes);		
 	}
 
 	//Get All Job Lists
@@ -71,21 +76,21 @@ public class HRController {
 	}
 
 	//Delete Job List By ID
-	@DeleteMapping("/deleteJobListingById")
+	@PostMapping("/deleteJobListingById")
 	public ResponseEntity<?> deleteJobListById(@RequestBody JobListing jobListing){
-		String result=hrService.deleteJobListById(jobListing);
-		return ResponseEntity.ok(result);		
+		DeleteJobListResponse deleteJobListRes=hrService.deleteJobListById(jobListing);
+		return ResponseEntity.ok(deleteJobListRes);		
 
 	}
 
 	//Get Uploaded Profiles For Particular Job
-	@GetMapping("/getUploadedProfilesForPerticularJob")
-	public ResponseEntity<?> getUploadedProfilesForPerticularJob(@RequestBody JobListing joblisting){
+	@GetMapping("/getCandidateProfileForPerticularJob")
+	public ResponseEntity<?> getCandidateProfileForPerticularJob(@RequestBody JobListing joblisting){
 		long joblistId=joblisting.getJoblistId();
-		if(hrService.getUploadedProfilesForPerticularJob(joblistId).isEmpty()) {
+		if(hrService.getCandidateProfileForPerticularJob(joblistId).isEmpty()) {
 			return ResponseEntity.ok("No candicate found for that job");
 		}
-		return ResponseEntity.ok(hrService.getUploadedProfilesForPerticularJob(joblistId));			
+		return ResponseEntity.ok(hrService.getCandidateProfileForPerticularJob(joblistId));			
 	}
 
 	//Get Profile URL
@@ -130,10 +135,10 @@ public class HRController {
 		return ResponseEntity.ok("Downloaded Successfully");
 	}
 
-	@PostMapping("/updateFileUploader")
-	public ResponseEntity<?> updateFileUploader(@RequestBody Candidate candidate){
-		Candidate candObj=hrService.updateFileUploader(candidate);
-		return ResponseEntity.ok(candObj);		
+	@PostMapping("/AcceptorRejectProfile")
+	public ResponseEntity<?> AcceptorRejectProfile(@RequestBody Candidate candidate){
+		AcceptorRejectProfileResponse accOrRejProResponse=hrService.AcceptorRejectProfile(candidate);
+		return ResponseEntity.ok(accOrRejProResponse);		
 	}
 
 	@GetMapping("/scheduleInterview")
@@ -145,8 +150,8 @@ public class HRController {
 
 	@PostMapping("/sendEmail")
 	public ResponseEntity<?> sendEmail(@RequestBody Candidate candidate){
-		hrService.sendEmail(candidate);
-		return ResponseEntity.ok("SUCCESS");		
+		SendEmailResponse sendEmailRes=hrService.sendEmail(candidate);
+		return ResponseEntity.ok(sendEmailRes);		
 	}
 
 	@GetMapping("/viewAllScheduledInterviews")

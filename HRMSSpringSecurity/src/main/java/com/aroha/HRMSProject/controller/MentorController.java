@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.aroha.HRMSProject.model.Candidate;
-import com.aroha.HRMSProject.payload.AddCandidateRequest;
-import com.aroha.HRMSProject.payload.AddCandidateResponse;
+import com.aroha.HRMSProject.payload.CreateCandidateRequest;
+import com.aroha.HRMSProject.payload.CreateCandidateResponse;
+import com.aroha.HRMSProject.payload.DeleteCandidateResponse;
 import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.UserPrincipal;
 import com.aroha.HRMSProject.service.MentorService;
@@ -40,43 +41,46 @@ public class MentorController {
 	@Autowired
 	Candidate candidate;
 
-	//Create New Profile Uploader or Create New Candidate
-	@PostMapping("/createNewFileUploader")
-	public ResponseEntity<?> createNewFileUploader(@RequestParam("model") String model, @RequestPart(name="file") MultipartFile file){
+	@PostMapping("/createCandidate")
+	public ResponseEntity<?> createCandidate(@RequestParam("model") String model, @RequestPart(name="file") MultipartFile file){
 		ObjectMapper mapper=new ObjectMapper();
 		try {
-			AddCandidateRequest addCandReq=mapper.readValue(model, AddCandidateRequest.class);
-			long jobListId=addCandReq.getJoblistId();
-			Candidate addCandObj=addCandReq.getAddCandidate();
+			CreateCandidateRequest createCandReq=mapper.readValue(model, CreateCandidateRequest.class);
 			byte[] data=file.getBytes();
 			int index=file.getOriginalFilename().indexOf(".");
 			String fileName=file.getOriginalFilename().substring(0,index);
-			OutputStream output=new FileOutputStream(new File(filePath+"/"+addCandObj.getCandEmail()+"-"+fileName));
+			OutputStream output=new FileOutputStream(new File(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName));
 			output.write(data);
-			Path path=Paths.get(filePath+"/"+addCandObj.getCandEmail()+"-"+fileName);
-			addCandObj.setFileUrl(path.toString());
+			Path path=Paths.get(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName);
+			createCandReq.setFileUrl(path.toString());
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
-			addCandObj.setCreatedAt(dateTime);
+			createCandReq.setCreatedAt(dateTime);
 			//addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
-			AddCandidateResponse addCandResponse=mentorService.createNewFileUploader(jobListId, addCandObj);
-			return ResponseEntity.ok(addCandResponse);	
+			CreateCandidateResponse createCandResponse=mentorService.createCandidate(createCandReq);
+			return ResponseEntity.ok(createCandResponse);
 		}
 		catch(Exception e) {
 			return ResponseEntity.ok(e.getMessage());
-		}
+		}		
 	}
 
 	//Get FileUploader By ID
-	@GetMapping("/getFileUpCandById")
-	public ResponseEntity<?> getFileUploaderCandById(@RequestBody Candidate candidate){
+	@GetMapping("/getCandidateById")
+	public ResponseEntity<?> getCandidateById(@RequestBody Candidate candidate){
 		System.out.println("Id is: "+candidate.getCandId());
-		Candidate getFileUpDetailsObj=mentorService.getFileUploaderCandById(candidate.getCandId());
+		Candidate getFileUpDetailsObj=mentorService.getCandidateById(candidate.getCandId());
 		return ResponseEntity.ok(getFileUpDetailsObj);		
 	}
 
 	//Get All File Uploaders
-	@GetMapping("/getAllFileUploaders")
-	public ResponseEntity<?> getAllFileUploaders(){
-		return ResponseEntity.ok(mentorService.getAllFileUploaders());	
+	@GetMapping("/getAllCandidates")
+	public ResponseEntity<?> getAllCandidates(){
+		return ResponseEntity.ok(mentorService.getAllCandidates());	
+	}
+	
+	@PostMapping("/deleteCandidate")
+	public ResponseEntity<?> deleteCandidate(@RequestBody Candidate candidate){
+		DeleteCandidateResponse deleteCandR=mentorService.deleteCandidate(candidate);
+		return ResponseEntity.ok(deleteCandR);		
 	}
 }

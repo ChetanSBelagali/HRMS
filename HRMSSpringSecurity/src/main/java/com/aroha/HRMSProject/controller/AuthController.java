@@ -1,5 +1,9 @@
 package com.aroha.HRMSProject.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,12 +18,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
+import com.aroha.HRMSProject.payload.AddUserRequest;
+import com.aroha.HRMSProject.payload.AddUserResponse;
 import com.aroha.HRMSProject.payload.ForgetPassword;
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
 import com.aroha.HRMSProject.payload.LoginRequest;
-import com.aroha.HRMSProject.payload.SignUpRequest;
-import com.aroha.HRMSProject.payload.SignUpResponse;
+import com.aroha.HRMSProject.payload.UpdateAddUserRequest;
+import com.aroha.HRMSProject.payload.UpdateAddUserResponse;
 import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.JwtTokenProvider;
 import com.aroha.HRMSProject.security.UserPrincipal;
@@ -65,17 +73,11 @@ public class AuthController {
 		//return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
 		return ResponseEntity.ok(jwtObj);
 	}
-
-	//Add Users
+	
 	@PostMapping("/addUsers")
-	public ResponseEntity<?> addUsersInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
-		
-		Long roleId=signUp.getRole().getRoleId();
-		User getUser=signUp.getAddUser();
-		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
-		//SignUpResponse result =signUp.setStatus(userService.addUser(roleId, getUser));
-		SignUpResponse signUpResponse=userService.addUser(roleId, getUser);
-		return ResponseEntity.ok(signUpResponse);
+	public ResponseEntity<?> newUser(@RequestBody AddUserRequest addUserReq, @CurrentUser UserPrincipal currentUser){
+		AddUserResponse response=userService.newUser(addUserReq, currentUser);
+		return ResponseEntity.ok(response);	
 	}
 
 	//Get All Users
@@ -84,21 +86,17 @@ public class AuthController {
 		return ResponseEntity.ok(userService.getAllUser());	
 	}
 
-	//Update Users
-	@PostMapping("/updateUserInRoles")
-	public ResponseEntity<?> updateUserInRoles(@RequestBody SignUpRequest signUp,@CurrentUser UserPrincipal user){
-		Long userId=signUp.getAddUser().getUserId();
-		User getUser=signUp.getAddUser();
-		System.out.println("Id is: "+userId);
-		getUser.setUserPassword(passwordEncoder.encode(signUp.getAddUser().getUserPassword()));
-		signUp.setStatus(userService.updateUser(userId, getUser));
-		return ResponseEntity.ok(signUp);		
+	@PostMapping("/updateNewUser")
+	public ResponseEntity<?> updateNewUser(@RequestBody UpdateAddUserRequest updateAddUserReq, @CurrentUser UserPrincipal currentUser){
+		System.out.println("Id is: "+updateAddUserReq.getUserId());
+		UpdateAddUserResponse response=userService.updateNewUser(updateAddUserReq, currentUser);
+		return ResponseEntity.ok(response);		
 	}
 
 	//Delete Particular User based on ID
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteUserInRoles(@PathVariable("id") long id){
-		String result=userService.deleteUserInRoles(id);
+	@PostMapping("/deleteUser")
+	public ResponseEntity<?> deleteUserInRoles(@RequestBody User user){
+		String result=userService.deleteUserInRoles(user.getUserId());
 		return ResponseEntity.ok(result);		
 	}
 

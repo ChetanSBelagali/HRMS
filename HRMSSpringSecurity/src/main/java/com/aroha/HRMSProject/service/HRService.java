@@ -15,6 +15,11 @@ import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.model.JobListing;
 import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
+import com.aroha.HRMSProject.payload.AcceptorRejectProfileResponse;
+import com.aroha.HRMSProject.payload.CreateJobListResponse;
+import com.aroha.HRMSProject.payload.DeleteJobListResponse;
+import com.aroha.HRMSProject.payload.SendEmailResponse;
+import com.aroha.HRMSProject.payload.UpdateJobListResponse;
 import com.aroha.HRMSProject.repo.CandidateRepository;
 import com.aroha.HRMSProject.repo.JobListingRepository;
 import com.sun.mail.util.MailSSLSocketFactory;
@@ -39,8 +44,13 @@ public class HRService {
 		this.javaMailSender = javaMailSender;
 	}
 
-	public JobListing createJobListing(JobListing jobListing) {
-		return jobListingRepo.save(jobListing);
+	public CreateJobListResponse createJobListing(JobListing jobListing) {
+		jobListingRepo.save(jobListing);
+		CreateJobListResponse createJoblistRes=new CreateJobListResponse();
+		boolean status=true;
+		createJoblistRes.setStatus(status);
+		createJoblistRes.setResult("Job List is Created Successfully");
+		return createJoblistRes;
 	}
 
 	public JobListing getJobListById(long joblistId) {
@@ -52,17 +62,26 @@ public class HRService {
 			throw new RecordNotFoundException("Not Found");
 	}
 
-	public JobListing updateJobList(JobListing jobListing) {
+	public UpdateJobListResponse updateJobList(JobListing jobListing) {
 		Optional<JobListing> jobListId=jobListingRepo.findByjoblistId(jobListing.getJoblistId());
 		System.out.println("Here Job List Id is: "+jobListId);
+		UpdateJobListResponse updateJobListRes=new UpdateJobListResponse();
+		boolean status=false;
 		if(jobListId.isPresent()) {
 			JobListing joblistingObj=jobListId.get();
-			joblistingObj.setJobDesc(jobListing.getJobDesc());
-			return jobListingRepo.save(joblistingObj);
+			joblistingObj.setJobDesc(jobListing.getJobDesc());		
+			jobListingRepo.save(joblistingObj);
+			status=true;
+			updateJobListRes.setStatus(status);
+			updateJobListRes.setResult("Job List Updated Successfully");
+			return updateJobListRes;
 		}
 		else {
 			// TODO Auto-generated method stub
-			return jobListingRepo.save(jobListing);
+			status=false;
+			updateJobListRes.setStatus(status);
+			updateJobListRes.setResult("Job List Id is not Present");
+			return updateJobListRes;
 		}
 	}
 
@@ -75,16 +94,24 @@ public class HRService {
 		// TODO Auto-generated method stub		
 	}
 
-	public String deleteJobListById(JobListing jobListing) {
+	public DeleteJobListResponse deleteJobListById(JobListing jobListing) {
 		Optional<JobListing> joblistid=jobListingRepo.findByjoblistId(jobListing.getJoblistId());
 		// TODO Auto-generated method stub
 		long id=jobListing.getJoblistId();
+		DeleteJobListResponse deleteJobListRes=new DeleteJobListResponse();
+		boolean status=false;
 		if(joblistid.isPresent()) {
 			jobListingRepo.deleteById(id);
-			return "JobListing Deleted Successfully";
+			status=true;
+			deleteJobListRes.setStatus(status);
+			deleteJobListRes.setResult("Job List Deleted Successfully");
+			return deleteJobListRes;
 		}
 		else {
-			return "No Record Found";
+			status=false;
+			deleteJobListRes.setStatus(status);
+			deleteJobListRes.setResult("Job List Id is not Present");
+			return deleteJobListRes;
 		}
 
 	}
@@ -93,7 +120,7 @@ public class HRService {
 		return jobListingRepo.findById(joblistid);
 	}
 
-	public ArrayList<Candidate> getUploadedProfilesForPerticularJob(long joblistId) {
+	public ArrayList<Candidate> getCandidateProfileForPerticularJob(long joblistId) {
 		List<Long> candObj=candidateRepository.getByJobListId(joblistId);
 		ArrayList<Candidate> arrayList=new ArrayList<>();
 		// TODO Auto-generated method stub
@@ -119,50 +146,77 @@ public class HRService {
 		}
 	}
 
-	public void sendEmail(Candidate candidate) {
+	public SendEmailResponse sendEmail(Candidate candidate) {
 		// TODO Auto-generated method stub
-		SimpleMailMessage mail = new SimpleMailMessage();
-		String subjectLine="Invitation to an interview - Aroha Technologies for the position Software Engineer";
-		String message="Hello " +candidate.getCandName()+ ",\n" + 
-				"\n" + 
-				"Congrats! Your profile has been shortlisted for Software Engineer Position & F2F Interview has been scheduled for "+
-				     candidate.getScheduledTime()+"\n"+
-				"\n" + 
-				"Venue and Contact person details:"+
-				"\n"+
-				"Aroha Technologies "+
-				"\n"+
-				"5th block, Jayanagar Bangalore-560041" + 
-				"\n" + 
-				"Contact Person: "+candidate.getInterviewerName()+"-"+candidate.getMobNumber()+"\n"+
-				"\n" +
-				"Note," + 
-				"\n" + 
-				"Take a printout of this mail as call letter & same profile, Any of your original ID Proof.";
-		mail.setTo(candidate.getCandEmail());
-		mail.setSubject(subjectLine);
-		mail.setText(message);
-		System.out.println(mail.getText());
+		Optional<Candidate> id=candidateRepository.findBycandId(candidate.getCandId());
+		SendEmailResponse sendEmailRes=new SendEmailResponse();	
+		boolean status=false;
+		if(id.isPresent()) {
+			Candidate candObj=id.get();
+			System.out.println("=========================================================");
+			System.out.println("Name is: "+candObj.getCandName());
+			System.out.println("Time is: "+candObj.getScheduledTime());
+			System.out.println("Interviewer Name is: "+candObj.getInterviewerName());
+			System.out.println("Mobile Number is: "+candObj.getMobNumber());
+			System.out.println("=========================================================");
+			SimpleMailMessage mail = new SimpleMailMessage();
+			String subjectLine="Invitation to an interview - Aroha Technologies for the position Software Engineer";
+			String message="Hello " +candObj.getCandName()+ ",\n" + 
+					"\n" + 
+					"Congrats! Your profile has been shortlisted for Software Engineer Position & F2F Interview has been scheduled for "+
+					candObj.getScheduledTime()+"\n"+
+					"\n" + 
+					"Venue and Contact person details:"+
+					"\n"+
+					"Aroha Technologies "+
+					"\n"+
+					"5th block, Jayanagar Bangalore-560041" + 
+					"\n" + 
+					"Contact Person: "+candObj.getInterviewerName()+"-"+candObj.getMobNumber()+"\n"+
+					"\n" +
+					"Note," + 
+					"\n" + 
+					"Take a printout of this mail as call letter & same profile, Any of your original ID Proof.";
+			mail.setTo(candObj.getCandEmail());
+			mail.setSubject(subjectLine);
+			mail.setText(message);
+			try {
+				System.out.println("I am here");
+				javaMailSender.send(mail);
+				status=true;
+				sendEmailRes.setStatus(status);
+				sendEmailRes.setResult("Mail Sent Successfully");
+				return sendEmailRes;
+			}catch(Exception ex) {System.out.println(ex.getMessage());
+			}
 
-		/*
-		 * This send() contains an Object of SimpleMailMessage as an Parameter
-		 */
-		try {
-			javaMailSender.send(mail);
-			System.out.println("Mail sent successfully");
-		}catch(Exception ex) {System.out.println(ex.getMessage());}
+		}
+		status=false;
+		sendEmailRes.setStatus(status);
+		sendEmailRes.setResult("Cannot Send Email, Id is not Present");
+		return sendEmailRes;
 	}
 
-	public Candidate updateFileUploader(Candidate candidate) {
+	public AcceptorRejectProfileResponse AcceptorRejectProfile(Candidate candidate) {
 		Optional<Candidate> candId=candidateRepository.findBycandId(candidate.getCandId());
+		AcceptorRejectProfileResponse accOrRejProResponse=new AcceptorRejectProfileResponse();
+		boolean status=false;
 		if(candId.isPresent()) {
 			Candidate candObj=candId.get();
 			candObj.setSetStatus(candidate.getSetStatus());
 			candObj.setInterviewerName(candidate.getInterviewerName());
 			candObj.setScheduledTime(candidate.getScheduledTime());
-			return candidateRepository.save(candObj);
+			candidateRepository.save(candObj);
+			status=true;
+			accOrRejProResponse.setStatus(status);
+			accOrRejProResponse.setResult("Profile Status is Updated Successfully");
+			return accOrRejProResponse;
+		}else {
+			status=false;
+			accOrRejProResponse.setStatus(status);
+			accOrRejProResponse.setResult("Candidate Id is not Present");
+			return accOrRejProResponse;	
 		}
-		return candidateRepository.save(candidate);		
 	}
 
 	public Candidate scheduleInterview(Candidate candidate) {
