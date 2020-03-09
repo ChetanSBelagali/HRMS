@@ -166,13 +166,16 @@ public class UserService {
 		}
 		else {
 			long getRoleId=0;
+			//String getRoleName="";
 			Set<Role>r=addUserReq.getRole();
 			Iterator<Role>itr=r.iterator();
 			while(itr.hasNext()) {
 				Role robj=itr.next();
 				getRoleId=robj.getRoleId();
+				//getRoleName=robj.getRoleName();
 			}
 			Optional<Role> role=roleService.findRole(getRoleId);
+			//Optional<Role> role=roleService.findByRoleName(getRoleName);
 			//System.out.println("RoleId: "+roleId);
 			User user = new User();
 			if(role.isPresent()) {

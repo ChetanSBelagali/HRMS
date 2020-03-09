@@ -69,6 +69,7 @@ public class HRService {
 		boolean status=false;
 		if(jobListId.isPresent()) {
 			JobListing joblistingObj=jobListId.get();
+			joblistingObj.setJobTitle(jobListing.getJobTitle());
 			joblistingObj.setJobDesc(jobListing.getJobDesc());		
 			jobListingRepo.save(joblistingObj);
 			status=true;

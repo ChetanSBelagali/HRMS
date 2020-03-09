@@ -21,6 +21,7 @@ public class JobListing implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long joblistId;
+	private String jobTitle;
 	private String jobDesc;
 
 
@@ -52,6 +53,14 @@ public class JobListing implements Serializable {
 	public void setCandidate(Set<Candidate> candidate) {
 		this.candidate = candidate;
 	}
+	public String getJobTitle() {
+		return jobTitle;
+	}
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
+	}
+	
+	
 
 
 }

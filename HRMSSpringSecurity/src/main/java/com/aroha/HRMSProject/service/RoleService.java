@@ -32,6 +32,10 @@ public class RoleService {
 		return roleRepo.findById(roleid);
 	}
 	
+	public Optional<Role> findByRoleName(String roleName){
+		return roleRepo.findByRoleName(roleName);
+	}
+	
 	public List<Role> getAllRole(){
 		return roleRepo.findAll();
 	}
