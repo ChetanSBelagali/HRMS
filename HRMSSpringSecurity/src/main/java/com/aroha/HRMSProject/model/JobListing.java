@@ -4,12 +4,14 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 
@@ -22,6 +24,9 @@ public class JobListing implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long joblistId;
 	private String jobTitle;
+	
+	@Lob 
+	@Column(name="jobDesc", length=1024)
 	private String jobDesc;
 
 

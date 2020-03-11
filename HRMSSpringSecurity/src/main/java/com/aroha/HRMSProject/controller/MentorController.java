@@ -38,25 +38,39 @@ public class MentorController {
 	@Value("${app.path}")
 	private String filePath;
 
+
 	@Autowired
 	Candidate candidate;
 
 	@PostMapping("/createCandidate")
 	public ResponseEntity<?> createCandidate(@RequestParam("model") String model, @RequestPart(name="file") MultipartFile file){
 		ObjectMapper mapper=new ObjectMapper();
+		CreateCandidateRequest createCandReq=null;
+		CreateCandidateResponse createCandResponse=null;
 		try {
-			CreateCandidateRequest createCandReq=mapper.readValue(model, CreateCandidateRequest.class);
+			Path currentRelativePath = Paths.get("");
+			String absolutePath = currentRelativePath.toAbsolutePath().toString();
+			System.out.println("Current relative path is: " + absolutePath);
+			String URL=absolutePath+"/"+"fileurl";
+			File newFolder=new File(URL);
+			boolean created=newFolder.mkdirs();
+			createCandReq=mapper.readValue(model, CreateCandidateRequest.class);
 			byte[] data=file.getBytes();
+			System.out.println("data is: "+data.length);
 			int index=file.getOriginalFilename().indexOf(".");
 			String fileName=file.getOriginalFilename().substring(0,index);
-			OutputStream output=new FileOutputStream(new File(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName));
+			OutputStream output=new FileOutputStream(new File(URL+"/"+createCandReq.getCandEmail()+"-"+fileName));
+			System.out.println("Hi: "+output.toString());
+			//OutputStream output=new FileOutputStream(new File(urlPath+"/"+createCandReq.getCandEmail()+"-"+fileName));
 			output.write(data);
-			Path path=Paths.get(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName);
+			//Path path=Paths.get(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName);
+			Path path=Paths.get(URL+"/"+createCandReq.getCandEmail()+"-"+fileName);
+			System.out.println("Path is: "+path);
 			createCandReq.setFileUrl(path.toString());
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
 			createCandReq.setCreatedAt(dateTime);
 			//addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));
-			CreateCandidateResponse createCandResponse=mentorService.createCandidate(createCandReq);
+			createCandResponse=mentorService.createCandidate(createCandReq);
 			return ResponseEntity.ok(createCandResponse);
 		}
 		catch(Exception e) {
@@ -77,7 +91,7 @@ public class MentorController {
 	public ResponseEntity<?> getAllCandidates(){
 		return ResponseEntity.ok(mentorService.getAllCandidates());	
 	}
-	
+
 	@PostMapping("/deleteCandidate")
 	public ResponseEntity<?> deleteCandidate(@RequestBody Candidate candidate){
 		DeleteCandidateResponse deleteCandR=mentorService.deleteCandidate(candidate);

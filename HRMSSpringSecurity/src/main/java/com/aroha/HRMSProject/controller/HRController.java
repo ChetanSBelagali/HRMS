@@ -47,6 +47,7 @@ public class HRController {
 	@Autowired
 	HRService hrService;
 
+	//=====================================================================================
 	//Create Job List
 	@PostMapping("/CreateJobList")
 	public ResponseEntity<?> createJobListing(@RequestBody JobListing jobListing){
@@ -54,6 +55,7 @@ public class HRController {
 		return ResponseEntity.ok(createJoblistRes);	
 	}
 
+	//=====================================================================================
 	//Get Job List By id
 	@GetMapping("/getJobListById")
 	public ResponseEntity<?> getJobListById(@RequestBody JobListing jobListing){
@@ -61,6 +63,7 @@ public class HRController {
 		return ResponseEntity.ok(getJobListObj);	
 	}
 
+	//=====================================================================================
 	//Update Job List
 	@PostMapping("/UpdateJobList")
 	public ResponseEntity<?> updateJobListing(@RequestBody JobListing jobListing){
@@ -68,6 +71,7 @@ public class HRController {
 		return ResponseEntity.ok(updateJobListRes);		
 	}
 
+	//=====================================================================================
 	//Get All Job Lists
 	@GetMapping("/getAllJobList")
 	public ResponseEntity<?> getAllJobListing(){
@@ -75,6 +79,7 @@ public class HRController {
 		return ResponseEntity.ok(list);		
 	}
 
+	//==========================================================================================
 	//Delete Job List By ID
 	@PostMapping("/deleteJobListingById")
 	public ResponseEntity<?> deleteJobListById(@RequestBody JobListing jobListing){
@@ -83,6 +88,7 @@ public class HRController {
 
 	}
 
+	//============================================================================================
 	//Get Uploaded Profiles For Particular Job
 	@GetMapping("/getCandidateProfileForPerticularJob")
 	public ResponseEntity<?> getCandidateProfileForPerticularJob(@RequestBody JobListing joblisting){
@@ -93,6 +99,7 @@ public class HRController {
 		return ResponseEntity.ok(hrService.getCandidateProfileForPerticularJob(joblistId));			
 	}
 
+	//=============================================================================================
 	//Get Profile URL
 	@GetMapping("/getProfileURLToDownloadById")
 	public ResponseEntity<?> getProfileURLToDownloadById(@RequestBody Candidate candidate){
@@ -100,6 +107,7 @@ public class HRController {
 		return ResponseEntity.ok(profileURL);		
 	}
 
+	//===============================================================================================
 	@PostMapping("/fileDownload")
 	public ResponseEntity<?> fileDownload(@RequestBody Candidate candidate, HttpServletRequest request, HttpServletResponse response) throws IOException{
 		String profileURL=hrService.getProfileURLToDownloadById(candidate);
@@ -135,12 +143,14 @@ public class HRController {
 		return ResponseEntity.ok("Downloaded Successfully");
 	}
 
+	//===================================================================================================
 	@PostMapping("/AcceptorRejectProfile")
 	public ResponseEntity<?> AcceptorRejectProfile(@RequestBody Candidate candidate){
 		AcceptorRejectProfileResponse accOrRejProResponse=hrService.AcceptorRejectProfile(candidate);
 		return ResponseEntity.ok(accOrRejProResponse);		
 	}
 
+	//===================================================================================================
 	@GetMapping("/scheduleInterview")
 	public ResponseEntity<?> scheduleInterview(@RequestBody Candidate candidate){
 		//Long objId=candidate.getCandid();
@@ -148,12 +158,14 @@ public class HRController {
 		return ResponseEntity.ok(candObj);		
 	}
 
+	//===================================================================================================
 	@PostMapping("/sendEmail")
 	public ResponseEntity<?> sendEmail(@RequestBody Candidate candidate){
 		SendEmailResponse sendEmailRes=hrService.sendEmail(candidate);
 		return ResponseEntity.ok(sendEmailRes);		
 	}
 
+	//===================================================================================================
 	@GetMapping("/viewAllScheduledInterviews")
 	public ResponseEntity<?> viewAllScheduledInterviews(){
 		List<Candidate> listObj=hrService.viewAllScheduledInterviews();
