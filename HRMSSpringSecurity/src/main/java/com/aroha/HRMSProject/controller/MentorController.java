@@ -23,6 +23,7 @@ import com.aroha.HRMSProject.model.Candidate;
 import com.aroha.HRMSProject.payload.CreateCandidateRequest;
 import com.aroha.HRMSProject.payload.CreateCandidateResponse;
 import com.aroha.HRMSProject.payload.DeleteCandidateResponse;
+import com.aroha.HRMSProject.payload.FileUploadResponse;
 import com.aroha.HRMSProject.security.CurrentUser;
 import com.aroha.HRMSProject.security.UserPrincipal;
 import com.aroha.HRMSProject.service.MentorService;
@@ -34,6 +35,9 @@ public class MentorController {
 
 	@Autowired
 	MentorService mentorService;
+	
+	@Autowired
+	FileUploadController fileUploadController;
 
 	@Value("${app.path}")
 	private String filePath;
@@ -48,25 +52,9 @@ public class MentorController {
 		CreateCandidateRequest createCandReq=null;
 		CreateCandidateResponse createCandResponse=null;
 		try {
-			Path currentRelativePath = Paths.get("");
-			String absolutePath = currentRelativePath.toAbsolutePath().toString();
-			System.out.println("Current relative path is: " + absolutePath);
-			String URL=absolutePath+"/"+"fileurl";
-			File newFolder=new File(URL);
-			boolean created=newFolder.mkdirs();
 			createCandReq=mapper.readValue(model, CreateCandidateRequest.class);
-			byte[] data=file.getBytes();
-			System.out.println("data is: "+data.length);
-			int index=file.getOriginalFilename().indexOf(".");
-			String fileName=file.getOriginalFilename().substring(0,index);
-			OutputStream output=new FileOutputStream(new File(URL+"/"+createCandReq.getCandEmail()+"-"+fileName));
-			System.out.println("Hi: "+output.toString());
-			//OutputStream output=new FileOutputStream(new File(urlPath+"/"+createCandReq.getCandEmail()+"-"+fileName));
-			output.write(data);
-			//Path path=Paths.get(filePath+"/"+createCandReq.getCandEmail()+"-"+fileName);
-			Path path=Paths.get(URL+"/"+createCandReq.getCandEmail()+"-"+fileName);
-			System.out.println("Path is: "+path);
-			createCandReq.setFileUrl(path.toString());
+			FileUploadResponse fileUploadResponse=fileUploadController.uploadFile(file, createCandReq);
+			createCandReq.setFileUrl(fileUploadResponse.getFileDownloadUri());
 			String dateTime=Calendar.getInstance().getTime().toString().replaceAll("Z", " ");
 			createCandReq.setCreatedAt(dateTime);
 			//addCandReq.setStatus(mentorService.createNewFileUploader(jobListId, addCandObj));

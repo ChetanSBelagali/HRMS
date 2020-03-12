@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.aroha.HRMSProject.config.FileConfig;
 import com.aroha.HRMSProject.model.Candidate;
@@ -38,6 +39,7 @@ import com.aroha.HRMSProject.payload.CreateJobListResponse;
 import com.aroha.HRMSProject.payload.DeleteJobListResponse;
 import com.aroha.HRMSProject.payload.SendEmailResponse;
 import com.aroha.HRMSProject.payload.UpdateJobListResponse;
+import com.aroha.HRMSProject.repo.CandidateRepository;
 import com.aroha.HRMSProject.service.HRService;
 
 @RestController
@@ -46,6 +48,15 @@ public class HRController {
 
 	@Autowired
 	HRService hrService;
+
+	@Autowired
+	FileDownloadController fileDownloadController;
+
+	@Autowired
+	CandidateRepository candidateRepo;
+
+	@Autowired
+	HttpServletRequest request;
 
 	//=====================================================================================
 	//Create Job List
@@ -106,42 +117,22 @@ public class HRController {
 		String profileURL=hrService.getProfileURLToDownloadById(candidate);
 		return ResponseEntity.ok(profileURL);		
 	}
-
-	//===============================================================================================
-	@PostMapping("/fileDownload")
-	public ResponseEntity<?> fileDownload(@RequestBody Candidate candidate, HttpServletRequest request, HttpServletResponse response) throws IOException{
-		String profileURL=hrService.getProfileURLToDownloadById(candidate);
-		//File newFile=new File(profileURL);
-		Path file=Paths.get(profileURL);
-
-		//Tika tika = new Tika();
-		File newfile =new File(profileURL);
-		System.out.println("new File is: "+newfile.getCanonicalPath());
-
-		InputStream is = new BufferedInputStream(new FileInputStream(profileURL));
-		if(Files.exists(file)) {
-			//String mimeType = Files.probeContentType(file);
-			//String mimeType = tika.detect(newfile);
-			String mimeType = URLConnection.guessContentTypeFromStream(is);
-			System.out.println("File is :"+file);
-			System.out.println("file mimetype:"+mimeType);
-			if (mimeType == null) {
-				mimeType = "application/octet-stream";
-			}
-			response.setContentType(mimeType);
-			//			response.addHeader("Content-Disposition", "attachment; filename="+file);
-			response.addHeader("Content-Disposition", "attachment; filename="+profileURL);
-			try
-			{
-				Files.copy(file, response.getOutputStream());
-				response.getOutputStream().flush();
-			} 
-			catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-		return ResponseEntity.ok("Downloaded Successfully");
-	}
+	
+	//==================================================================================================
+//	@PostMapping("/download")
+//	public ResponseEntity<?> download(@RequestBody Candidate candidate){
+//		Optional<Candidate> candid=candidateRepo.findBycandId(candidate.getCandId());
+//		if(candid.isPresent()) {
+//			Candidate candObj=candid.get();
+//			String URL=candObj.getFileUrl();
+//			System.out.println("URL is: "+URL);
+//			RestTemplate restTemplate = new RestTemplate();
+//		    String result = restTemplate.getForObject(URL, String.class);
+//		    System.out.println("Result is: "+result);
+//			fileDownloadController.downloadFile(result, request);
+//		}
+//		return ResponseEntity.ok("Downloaded Successfully");
+//	}
 
 	//===================================================================================================
 	@PostMapping("/AcceptorRejectProfile")
