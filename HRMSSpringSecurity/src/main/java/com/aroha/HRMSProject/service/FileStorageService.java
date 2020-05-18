@@ -18,6 +18,7 @@ import com.aroha.HRMSProject.exception.FileNotFoundException;
 import com.aroha.HRMSProject.exception.FileStorageException;
 import com.aroha.HRMSProject.model.FileStorageProperties;
 import com.aroha.HRMSProject.payload.CreateCandidateRequest;
+import com.aroha.HRMSProject.payload.UpdateCandidateRequest;
 
 @Service
 public class FileStorageService {
@@ -68,6 +69,27 @@ public class FileStorageService {
 			}
 		} catch (MalformedURLException ex) {
 			throw new FileNotFoundException("File not found " + fileName);
+		}
+	}
+
+	public String updateStoreFile(MultipartFile updateFile, UpdateCandidateRequest updateCandReq) {
+		// TODO Auto-generated method stub
+		String fileName = updateCandReq.getCandEmail()+"_"+StringUtils.cleanPath(updateFile.getOriginalFilename());
+		System.out.println("File Name is: "+fileName);
+
+		try {
+			// Check if the file's name contains invalid characters
+			if (fileName.contains("..")) {
+				throw new FileStorageException("Sorry! Filename contains invalid path sequence " + fileName);
+			}
+
+			// Copy file to the target location (Replacing existing file with the same name)
+			Path targetLocation = this.fileStorageLocation.resolve(fileName);
+			Files.copy(updateFile.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+			return fileName;
+		} catch (IOException ex) {
+			throw new FileStorageException("Could not store file " + fileName + ". Please try again!", ex);
 		}
 	}
 

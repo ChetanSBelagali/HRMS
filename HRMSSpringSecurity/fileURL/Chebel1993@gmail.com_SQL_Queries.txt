@@ -1,0 +1,325 @@
+1..Display the product which costs more than the product named Chair
+
+Select 
+       p_nm
+From 
+       product
+Where 
+      p_price > (select 
+	                p_price
+                 From 
+		        product
+                        
+                 Where 
+                        p_nm='CHAIR');
+					  
+
+2..Find the different Products which are sold to CITI Bank in the month of Jan 2020
+
+Select 
+       p_nm
+From 
+       product p,customer c,sales_hdr sh,sales_dtl sd
+
+Where 
+       p.p_id=sd.p_id and
+              
+       Sd.s_h_id=sh.s_h_id and
+             
+       Sh.cust_id=c.cust_id and
+             
+       c.cust_name='CITI BANK' and
+             
+       month(sales_date)=01 and
+             
+       Year(sales_date)=2020;
+
+3..Display the products which are falling in Furniture category and cost more than the expensive product from stationary category
+
+select 
+       p_nm
+
+from 
+       product
+
+where  
+       p_price>(select 
+                      max(p_price)
+    
+                from 
+                      product
+    
+                where p_cat='stationary') 
+                and
+    
+                      p_cat='furniture';
+
+4..Display the category, product name and its price which is most expensive in respective category
+
+select 
+       p_cat,p_nm,p_price
+
+from 
+       product p1
+
+where 
+       p_price=(select 
+                       max(p_price)
+   
+                from 
+                       product p2
+  
+                where 
+                       p1.p_cat=p2.p_cat);
+
+5..Display customer name, product name, sold_date, Qty, product price and sales amount
+
+select 
+       cust_name,p_nm,sales_date,p_qty,p_price,s_amount
+
+from 
+       product p,customer c,sales_hdr sh,sales_dtl sd
+
+Where 
+       p.p_id=sd.p_id 
+and
+              
+       Sd.s_h_id=sh.s_h_id 
+and
+             
+       Sh.cust_id=c.cust_id;
+
+9..Display the product which costs between the price of Pencil and the price of Pen Box
+
+select 
+       p_nm 
+
+from 
+       product
+
+where 
+       p_price between (select 
+                               p_price
+                  
+                        from  
+                               product
+    
+                        where 
+                               p_nm='pencil')
+             
+                        and
+   
+                              (select 
+                                      p_price
+    
+                               from 
+                                      product
+     
+                               where 
+                                      p_nm='pen')
+    and 
+  p_nm not in ('pencil','pen');
+
+6..Dsplay customers who have more than 4 sales details transactions in the month of Jan 2020
+
+select 
+       cust_name,count(s_d_id)
+
+from 
+       customer c,sales_hdr sh,sales_dtl sd
+
+where 
+       c.cust_id=sh.cust_id and
+              
+       sh.s_h_id=sd.s_h_id  and
+             
+       month(sales_date)=01 and
+              
+       year(sales_date)=2020
+
+       group by 
+                cust_name
+       
+having 
+                count(s_d_id)>4
+
+
+7..Display Customer name, number of sale records and number of sale detail records 
+
+select 
+       a.cust_name,a.nsr,b.nsd
+
+from
+          
+       (select 
+               cust_name,count(sh.s_h_id)nsr
+           
+        from 
+               customer c left join sales_hdr sh
+           
+        on 
+               c.cust_id=sh.cust_id
+            
+        group by 
+               cust_name) a
+ 
+        left join
+            
+               (select 
+                       cust_name,count(sd.s_d_id)nsd
+             
+                from 
+                       customer c 
+                left join 
+                       sales_hdr sh
+             
+                on 
+                       c.cust_id=sh.cust_id 
+                left join 
+                       sales_dtl sd
+             
+                on 
+                       sh.s_h_id=sd.s_h_id
+              
+                group by 
+                       cust_name) b
+                
+on 
+                       a.cust_name=b.cust_name;
+
+
+8..Display the product name which generated most sale amount in the month of Jan 2020
+
+select 
+       p_nm,max(s_amount)
+
+from 
+       product p,sales_dtl s,sales_hdr sh
+
+where 
+       p.p_id=s.p_id 
+and 
+             
+       s.s_h_id=sh.s_h_id 
+and
+              
+       month(sales_date)=01 
+and
+              
+       year(sales_date)=2020
+
+group by 
+       p_nm
+
+having 
+       max(s_amount)=(select 
+                             max(s_amount)
+                                                  
+                      from 
+                             sales_dtl)
+
+
+10..Diplay the common products which are bought by both Citi Bank and HSBC Bank customers
+
+select 
+       p_nm
+
+from 
+       product p,customer c,sales_hdr sh,sales_dtl sd
+
+Where  
+       [p.p_id=sd.p_id 
+and
+              
+       Sd.s_h_id=sh.s_h_id 
+and
+             
+       Sh.cust_id=c.cust_id 
+and
+             
+       c.cust_name='city Bank']
+
+
+
+INTERSECT
+
+
+(select 
+       p_nm
+
+from 
+       product p,customer c,sales_hdr sh,sales_dtl sd
+
+Where 
+       [p.p_id=sd.p_id 
+and
+             
+       Sd.s_h_id=sh.s_h_id 
+and
+             
+       Sh.cust_id=c.cust_id 
+and
+             
+       c.cust_name='HSBC Bank']);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

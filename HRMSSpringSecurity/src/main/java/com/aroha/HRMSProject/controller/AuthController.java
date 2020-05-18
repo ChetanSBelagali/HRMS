@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,15 +18,19 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aroha.HRMSProject.model.Role;
 import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.payload.AddUserRequest;
 import com.aroha.HRMSProject.payload.AddUserResponse;
+import com.aroha.HRMSProject.payload.DeleteUserResponse;
 import com.aroha.HRMSProject.payload.ForgetPassword;
+import com.aroha.HRMSProject.payload.ForgotPasswordResponse;
 import com.aroha.HRMSProject.payload.JwtAuthenticationResponse;
 import com.aroha.HRMSProject.payload.LoginRequest;
 import com.aroha.HRMSProject.payload.UpdateAddUserRequest;
@@ -35,7 +42,10 @@ import com.aroha.HRMSProject.service.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
+
 public class AuthController {
+	
+	private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 	@Autowired
 	AuthenticationManager authenticationManager;
@@ -86,7 +96,7 @@ public class AuthController {
 		return ResponseEntity.ok(userService.getAllUser());	
 	}
 
-	@PostMapping("/updateNewUser")
+	@PutMapping("/updateNewUser")
 	public ResponseEntity<?> updateNewUser(@RequestBody UpdateAddUserRequest updateAddUserReq, @CurrentUser UserPrincipal currentUser){
 		System.out.println("Id is: "+updateAddUserReq.getUserId());
 		UpdateAddUserResponse response=userService.updateNewUser(updateAddUserReq, currentUser);
@@ -94,29 +104,42 @@ public class AuthController {
 	}
 
 	//Delete Particular User based on ID
-	@PostMapping("/deleteUser")
-	public ResponseEntity<?> deleteUserInRoles(@RequestBody User user){
-		String result=userService.deleteUserInRoles(user.getUserId());
-		return ResponseEntity.ok(result);		
+	@DeleteMapping("/deleteUser/{id}")
+	public ResponseEntity<?> deleteUserInRoles(@PathVariable long id){
+		DeleteUserResponse deleteUserResponse=userService.deleteUserInRoles(id);
+		return ResponseEntity.ok(deleteUserResponse);		
 	}
 
 	@PostMapping("/ForgotPassword")
 	public ResponseEntity<?> forgotPassword(@RequestBody LoginRequest loginRequest){
+		ForgotPasswordResponse forgotPassRes=new ForgotPasswordResponse();
+		boolean status=false;
 		boolean isExists=userService.checkUserEmail(loginRequest.getUsernameOrEmail());
 		if(!isExists){
-			return ResponseEntity.ok(loginRequest.getUsernameOrEmail()+" does not exists");
+			forgotPassRes.setStatus(status);
+			logger.error(loginRequest.getUsernameOrEmail()+" does not exists");
+			forgotPassRes.setResult(loginRequest.getUsernameOrEmail()+" does not exists");
+			return ResponseEntity.ok(forgotPassRes);
 		}
 		else {
 			boolean isTrue=userService.forgotPassword(loginRequest.getUsernameOrEmail());
 			if(isTrue) {
-				return ResponseEntity.ok("OTP sent to registered emailId");
+				status=true;
+				forgotPassRes.setStatus(status);
+				logger.info("OTP sent to registered emailId");
+				forgotPassRes.setResult("OTP sent to registered emailId");
+				return ResponseEntity.ok(forgotPassRes);
 			}
 		}
-		return ResponseEntity.ok("Failed to send the email");		
+		status=false;
+		forgotPassRes.setStatus(status);
+		logger.error("Failed to send the email");
+		forgotPassRes.setResult("Failed to send the email");
+		return ResponseEntity.ok(forgotPassRes);		
 	}
 
 	@PostMapping("/UpdatePassword")
-	public ResponseEntity<?> updatePassword(@RequestBody ForgetPassword password){
+	public ResponseEntity<?> updatePassword(@RequestBody ForgetPassword password) throws Exception{
 		return ResponseEntity.ok(userService.updatePassword(password));	
 	}
 }

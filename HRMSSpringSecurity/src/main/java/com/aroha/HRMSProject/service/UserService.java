@@ -5,8 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,9 +21,11 @@ import com.aroha.HRMSProject.model.RoleName;
 import com.aroha.HRMSProject.model.User;
 import com.aroha.HRMSProject.payload.AddUserRequest;
 import com.aroha.HRMSProject.payload.AddUserResponse;
+import com.aroha.HRMSProject.payload.DeleteUserResponse;
 import com.aroha.HRMSProject.payload.ForgetPassword;
 import com.aroha.HRMSProject.payload.UpdateAddUserRequest;
 import com.aroha.HRMSProject.payload.UpdateAddUserResponse;
+import com.aroha.HRMSProject.payload.UpdatePasswordResponse;
 import com.aroha.HRMSProject.repo.RoleRepository;
 import com.aroha.HRMSProject.repo.UserRepository;
 import com.aroha.HRMSProject.security.CurrentUser;
@@ -44,6 +49,8 @@ public class UserService {
 	private RoleService roleService;
 
 	static String unique_password="";
+	
+	static String strOTP="";
 
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -51,6 +58,8 @@ public class UserService {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
+	
+	private static final Logger Logger=LoggerFactory.getLogger(UserService.class);
 
 
 	public Optional<User> getuser(String userNameOrEmail){
@@ -61,14 +70,23 @@ public class UserService {
 		return userRepo.findAll();		 
 	}
 
-	public String deleteUserInRoles(Long userId) {
+	public DeleteUserResponse deleteUserInRoles(Long userId) {
 		Optional<User> userIdObj=userRepo.findByuserId(userId);
+		boolean status=true;
+		DeleteUserResponse deleteUserResponse=new DeleteUserResponse();
 		if(userIdObj.isPresent()) {
 			userRepo.deleteById(userId);
-			return "User Deleted Successfully";
+			deleteUserResponse.setStatus(status);
+			deleteUserResponse.setResult("User Deleted Successfully");
+			Logger.info("User Deleted Successfully");
+			return deleteUserResponse;
 		}
 		else {
-			return "User ID not Present";
+			status=false;
+			deleteUserResponse.setStatus(status);
+			deleteUserResponse.setResult("User Id is not Present");
+			Logger.error("User Id is not Present");
+			return deleteUserResponse;
 		}
 	}
 
@@ -79,27 +97,18 @@ public class UserService {
 	}
 
 	public boolean forgotPassword(String usernameOrEmail) {
-		// TODO Auto-generated method stub
-		long code=Code();
-		for (long i=code;i!=0;i/=100)//a loop extracting 2 digits from the code  
-		{ 
-			long digit=i%100;//extracting two digits 
-			if (digit<=90) 
-				digit=digit+32;  
-			//converting those two digits(ascii value) to its character value 
-			char ch=(char) digit; 
-			// adding 32 so that our least value be a valid character  
-			unique_password=ch+unique_password;//adding the character to the string 
-		} 
 		Optional<User> user=userRepo.findByuserEmail(usernameOrEmail);
 		User getUser=user.get();
-		boolean istrue=sendEmail(unique_password,usernameOrEmail);
+		Random rand=new Random();
+		int uniqueValue=rand.nextInt(1000000);
+		strOTP=String.valueOf(uniqueValue);
+		System.out.println(uniqueValue);
+		boolean istrue=sendEmail(strOTP,usernameOrEmail);
 		return istrue;
 
 	}
 
 	public boolean sendEmail(String unique_password,String userOrEmail) {
-		//logger.info("OTP Password is "+unique_password);
 		SimpleMailMessage msg = new SimpleMailMessage();
 		msg.setTo(userOrEmail);
 		msg.setSubject("Forget Password");
@@ -116,40 +125,44 @@ public class UserService {
 				"ArohaTechnologies");
 		try {
 			javaMailSender.send(msg);
-			//logger.info("Email sent to registered email");
+			Logger.info("Email sent to registered email");
 			return true;
 		}catch(Exception ex) {		
-			//logger.error("Failed to send mail "+ex.getMessage());
+			Logger.error("Failed to send mail "+ex.getMessage());
 
 		}
 		return false;
 
 	}
 
-	public static long Code() //this code returns the  unique 16 digit code  
-	{  //creating a 16 digit code using Math.random function 
-		long code   =(long)((Math.random()*9*Math.pow(10,15))+Math.pow(10,15)); 
-		return code; //returning the code 
-	}
-
 	public Object updatePassword(ForgetPassword object) {
 		String getOtpFromUser=object.getOneTimePass();
-		if(getOtpFromUser.equals(unique_password)) {
+		UpdatePasswordResponse updatePassRes=new UpdatePasswordResponse();
+		boolean status=false;
+		if(getOtpFromUser.equals(strOTP)) {
 			String email=object.getUsernameOrEmail();
 			Optional<User> obj=userRepo.findByuserEmail(email);
 			User user=obj.get();
 			if(passwordEncoder.matches(object.getPassword(), user.getUserPassword()) ){
-				//logger.info("Error You can not give previous password, please enter a new password");
-				return "You can not give previous password, please enter a new password";
+				Logger.info("Error You can not give previous password, please enter a new password");
+				updatePassRes.setStatus(status);
+				updatePassRes.setResult("You can not give previous password, please enter a new password");
+				return updatePassRes;
 			}else {
 				user.setUserPassword((passwordEncoder.encode(object.getPassword())));
 				userRepo.save(user);
-				//logger.info("password changed for :"+user.getName());
-				return "Password updated successfully, please login with your new password";
+				status=true;
+				updatePassRes.setStatus(status);
+				updatePassRes.setResult("Password updated successfully, please login with your new password");
+				Logger.info("password changed for :"+user.getUserName());
+				return updatePassRes;
 			}
 		}else {
-			//logger.error("OTP didn't matched");
-			return "OTP did not match";
+			Logger.error("OTP didn't matched");
+			status=false;
+			updatePassRes.setStatus(status);
+			updatePassRes.setResult("OTP did not match");
+			return updatePassRes;
 		}		
 	}
 
@@ -162,6 +175,7 @@ public class UserService {
 		if(isExists) {
 			addUserRes.setStatus(status);
 			addUserRes.setResult("User Already Exists");
+			Logger.error("User Already Exists");
 			return addUserRes;
 		}
 		else {
@@ -188,15 +202,18 @@ public class UserService {
 				user.setUserPassword(passwordEncoder.encode(addUserReq.getUserPassword()));
 				System.out.println("Role is: "+user.getRole());
 				userRepo.save(user);
+				Logger.info("User saved Successfully");
 				status=true;
 				addUserRes.setStatus(status);
 				addUserRes.setResult("User Saved Successfully");
+				addUserRes.setData(user);
 				return addUserRes;
 			}
 		}
 		status=false;
 		addUserRes.setStatus(status);
 		addUserRes.setResult("Something Went Wrong");
+		Logger.error("Something Went Wrong");
 		return addUserRes;
 	}
 
@@ -215,6 +232,8 @@ public class UserService {
 		Optional<User> userID=userRepo.findByuserId(updateAddUserReq.getUserId());
 		if(userID.isPresent()) {
 			User userObj=userID.get();
+			userObj.setRole(updateAddUserReq.getRole());
+			System.out.println("fghfhf: "+userObj.getRole().toString());
 			userObj.setUserName(updateAddUserReq.getUserName());
 			userObj.setUserEmail(updateAddUserReq.getUserEmail());
 			userObj.setPhoneNumber(updateAddUserReq.getPhoneNumber());
@@ -224,11 +243,14 @@ public class UserService {
 			status=true;
 			updateAddUserResponse.setStatus(status);
 			updateAddUserResponse.setResult("User Updated Successfully");
+			updateAddUserResponse.setData(userObj);
+			Logger.info("User Updated Successfully");
 			return updateAddUserResponse;
 		}
 		status=false;
 		updateAddUserResponse.setStatus(status);
 		updateAddUserResponse.setResult("User Id is not Present");
+		Logger.error("User Id is not Present");
 		return updateAddUserResponse;
 	}
 

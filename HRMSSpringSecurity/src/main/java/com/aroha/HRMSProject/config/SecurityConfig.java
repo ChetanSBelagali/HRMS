@@ -91,9 +91,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						"/**/*.jpg",
 						"/**/*.html",
 						"/**/*.css",
-						"/**/*.js")
+						"/**/*.js",
+				        "/**/*.pdf",
+				        "/**/*.doc",
+				        "/**/*.txt")
 				.permitAll()
 				.antMatchers("/api/auth/signin")
+				.permitAll()
+				.antMatchers("/api/auth//ForgotPassword")
+				.permitAll()
+				.antMatchers("/api/auth/UpdatePassword")
 				.permitAll()
 				.antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
 				.permitAll()

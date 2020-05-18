@@ -15,5 +15,4 @@ public class HrmsProjectApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HrmsProjectApplication.class, args);
 	}
-
 }

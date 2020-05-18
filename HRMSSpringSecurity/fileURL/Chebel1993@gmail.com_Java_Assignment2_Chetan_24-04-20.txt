@@ -1,0 +1,194 @@
+1.What is re-entrant lock in java and how to achieve that?
+Ans.  ReentrantLock is mutual exclusive lock, similar to implicit locking 
+      provided by synchronized keyword in Java, with extended feature like fairness, 
+      which can be used to provide lock to longest waiting thread. Lock is acquired 
+      by lock() method and held by Thread until a call to unlock() method.
+
+      Ex:-It will be used in the following way
+          public void some_method() 
+          { 
+            reentrantlock.lock(); 
+            try
+            { 
+                //Do some work 
+            } 
+            catch(Exception e) 
+            { 
+                 e.printStackTrace(); 
+            } 
+            finally
+            { 
+                 reentrantlock.unlock(); 
+            } 
+          
+           } 
+
+2.Compare Hashtable vs synchronized HashMap vs concurrent HashMap?
+Ans.  Hashtable:- * A Hashtable is an array of a list. Each list is known as a bucket. 
+                    The position of the bucket is identified by calling the hashcode() method. 
+                    A Hashtable contains values based on the key.
+                  * Java Hashtable class contains unique elements.
+                  * Java Hashtable class doesn't allow null key or value.
+                  * Java Hashtable class is synchronized.
+                  * The initial default capacity of Hashtable class is 11 whereas loadFactor is 0.75.
+
+      Synchronized Hashmap:- 
+                  * Synchronization at Object level.
+                  * Every read/write operation needs to acquire lock.
+                  * Locking the entire collection is a performance overhead.
+                  * This essentially gives access to only one thread to the entire map  
+                    & blocks all the other threads.
+                  * SynchronizedHashMap returns Iterator, which fails-fast on concurrent modification.
+
+      Concurrent Hashmap:-
+                  * You should use ConcurrentHashMap when you need very high concurrency in your project.
+                  * It is thread safe without synchronizing the whole map.
+                  * Reads can happen very fast while write is done with a lock.
+                  * There is no locking at the object level
+                  * ConcurrentHashMap doesn’t throw a ConcurrentModificationException if one thread tries to modify it 
+                    while another is iterating over it.
+                  * ConcurrentHashMap uses multitude of locks.
+
+
+3.What are the popular design patterns used and give one example?
+Ans.  * Singleton design pattern.
+      * Factory design pattern.
+      * Decorator design pattern.
+      * Composite design pattern.
+      * Adapter design pattern.
+      * Prototype design pattern.
+      * Iterator design pattern.
+      
+      Ex for Decorator design pattern:-
+      * Component Interface – The interface or abstract class defining the methods that will be implemented. 
+                            In our case Car will be the component interface.
+
+                      package com.example;
+                      public interface Car {
+
+	                             public void assemble();
+                       }
+      * Component Implementation – The basic implementation of the component interface. We can have BasicCar 
+                                   class as our component implementation.
+
+                      package com.example;
+                      public class BasicCar implements Car {
+	              @Override
+	              public void assemble() {
+		                  System.out.print("Basic Car.");
+	                          }
+                       }
+      * Decorator – Decorator class implements the component interface and it has a HAS-A relationship with the 
+                    component interface. The component variable should be accessible to the child decorator classes, 
+                    so we will make this variable protected.
+                    
+                    package com.example;
+                    public class CarDecorator implements Car {
+	            protected Car car;	
+	            public CarDecorator(Car c){
+		               this.car=c;
+	               }
+	
+	            @Override
+	            public void assemble() {
+		               this.car.assemble();
+	                 }
+                     }
+       * Concrete Decorators – Extending the base decorator functionality and modifying the component behavior accordingly. 
+                               We can have concrete decorator classes as LuxuryCar and SportsCar.
+                    
+                    package com.example;
+
+                    public class SportsCar extends CarDecorator {
+
+	            public SportsCar(Car c) {
+		             super(c);
+	             }
+
+	            @Override
+	            public void assemble(){
+		                 super.assemble();
+		    System.out.print(" Adding features of Sports Car.");
+	                       }
+                     }
+
+                    package com.journaldev.design.decorator;
+
+                    public class LuxuryCar extends CarDecorator {
+
+	            public LuxuryCar(Car c) {
+		                      super(c);
+	             }
+	
+	            @Override
+	            public void assemble(){
+		            super.assemble();
+		            System.out.print(" Adding features of Luxury Car.");
+	                    }
+                    }
+
+4. How many ways to read csv file in java?
+Ans. 2 Ways:- * using java.io.BufferedReader and split() method from java.lang.String class
+              * using Apache Commons CSV library's CSVParser class.
+
+     Ex:-
+     import java.io.FileReader;  
+     import com.opencsv.CSVReader;  
+     public class ReadCSVExample3  
+     {    
+      public static void main(String[] args)  
+        {  
+            CSVReader reader = null;  
+            try  
+            {  
+             //parsing a CSV file into CSVReader class constructor  
+             reader = new CSVReader(new FileReader("F:\\CSVDemo.csv"));  
+             String [] nextLine;  
+             //reads one line at a time  
+             while ((nextLine = reader.readNext()) != null)  
+             {  
+                for(String token : nextLine)  
+                 {  
+                     System.out.print(token);  
+                 }  
+                     System.out.print("\n");  
+               }  
+             }
+             catch (Exception e)   
+             {  
+                 e.printStackTrace();  
+                     }  
+             }  
+        }       
+
+
+5.Explain concept lock and synchronization in java?
+Ans.  * lock:- Synchronization is built around an internal entity known as the lock or monitor. 
+               Every object has an lock associated with it. By convention, a thread that needs consistent 
+               access to an object's fields has to acquire the object's lock before accessing them, and 
+               then release the lock when it's done with them.
+      * synchronization:- If you declare any method as synchronized, it is known as synchronized method.
+               Synchronized method is used to lock an object for any shared resource.
+               When a thread invokes a synchronized method, it automatically acquires the lock for that object 
+               and releases it when the thread completes its task.
+
+8.How to manage a distributed transaction in Java?
+Ans  A distributed transaction is one that involves more than one transactional resource. 
+     Examples of transactional resources are the connectors for communicating with relational 
+     databases and messaging middleware. Often such a resource has an API that looks something 
+     like begin(), rollback(), commit(). In the Java world, a transactional resource usually shows up 
+     as the product of a factory provided by the underlying platform: for a database, it's a Connection 
+     (produced by DataSource) or Java Persistence API (JPA) EntityManager; for Java Message Service (JMS), it's a Session.
+
+9.What is Spring JDBC? What are the benefits and drawback of using the Spring JDBC over Hibernate ORM/JPA?
+Ans. Spring JdbcTemplate is a powerful mechanism to connect to the database and execute SQL queries. 
+     It internally uses JDBC api, but eliminates a lot of problems of JDBC API.
+     It provides you methods to write the queries directly, so it saves a lot of work and time.
+
+     Unlike JPA, spring jdbc cannot do things like,
+     * Caching (1st, 2nd level and query caching).
+     * Automatic creation of instances over queries.
+     * Navigation between entities is slower than JPA.
+     * Lazy loading.
+10.CRUD?
+Ans. please find the attached file.

@@ -1,5 +1,7 @@
 package com.aroha.HRMSProject.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,8 @@ import com.aroha.HRMSProject.model.JobListing;
 import com.aroha.HRMSProject.payload.CreateCandidateRequest;
 import com.aroha.HRMSProject.payload.CreateCandidateResponse;
 import com.aroha.HRMSProject.payload.DeleteCandidateResponse;
+import com.aroha.HRMSProject.payload.UpdateCandidateRequest;
+import com.aroha.HRMSProject.payload.UpdateCandidateResponse;
 import com.aroha.HRMSProject.repo.CandidateRepository;
 
 @Service
@@ -29,6 +33,12 @@ public class MentorService {
 
 	public CreateCandidateResponse createCandidate(CreateCandidateRequest createCandReq) {
 		// TODO Auto-generated method stub
+		
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+		String dateTime = formatter.format(date);
+
+		
 		long jobListId=0;
 		Set<JobListing> set=createCandReq.getJoblisting();
 		Iterator<JobListing> itr=set.iterator();
@@ -48,10 +58,12 @@ public class MentorService {
 			candidate.setMobNumber(createCandReq.getMobNumber());
 			candidate.setCreatedAt(createCandReq.getCreatedAt());
 			candidate.setFileUrl(createCandReq.getFileUrl());
+			candidate.setCreatedAt(dateTime);
 			candidateRepository.save(candidate);
 			status=true;
 			createCandRes.setStatus(status);
 			createCandRes.setResult("Candidate Profile Submitted Successfully");
+			createCandRes.setData(candidate);
 			return createCandRes;
 		}
 		status=false;
@@ -75,13 +87,13 @@ public class MentorService {
 	}
 
 
-	public DeleteCandidateResponse deleteCandidate(Candidate candidate) {
+	public DeleteCandidateResponse deleteCandidate(long id) {
 		// TODO Auto-generated method stub
-		Optional<Candidate> candId=candidateRepository.findBycandId(candidate.getCandId());
+		Optional<Candidate> candId=candidateRepository.findBycandId(id);
 		DeleteCandidateResponse deleteCandRes=new DeleteCandidateResponse();
 		boolean status=false;
 		if(candId.isPresent()) {
-			candidateRepository.deleteById(candidate.getCandId());
+			candidateRepository.deleteById(id);
 			status=true;
 			deleteCandRes.setStatus(status);
 			deleteCandRes.setResult("Candidate Profile Deleted Successfully");
@@ -92,6 +104,58 @@ public class MentorService {
 			deleteCandRes.setStatus(status);
 			deleteCandRes.setResult("Candidate Id is not Present");
 			return deleteCandRes;
+		}
+	}
+
+
+	public UpdateCandidateResponse updateCandidate(UpdateCandidateRequest updateCandReq) {
+		// TODO Auto-generated method stub
+		
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+		String dateTime = formatter.format(date);
+		System.out.println("Current Time is: "+dateTime);
+		
+		UpdateCandidateResponse updateCandRes=new UpdateCandidateResponse();
+		boolean status=true;
+
+		Optional<Candidate> candId=candidateRepository.findBycandId(updateCandReq.getCandId());
+		if(candId.isPresent()) {
+			long joblistid=0;
+			Set<JobListing> set=updateCandReq.getJoblisting();
+			Iterator<JobListing> itr=set.iterator();
+			while(itr.hasNext()) {
+				JobListing jobObj=itr.next();
+				joblistid=jobObj.getJoblistId();
+			}
+			Optional<JobListing> jobListObj=hrService.getJobListByJobListId(joblistid);
+			if(jobListObj.isPresent()) {
+				Candidate candObj=candId.get();
+				candObj.setCandName(updateCandReq.getCandName());
+				candObj.setCandEmail(updateCandReq.getCandEmail());
+				candObj.setMobNumber(updateCandReq.getMobNumber());
+				candObj.setJoblisting(updateCandReq.getJoblisting());
+				candObj.setFileUrl(updateCandReq.getFileUrl());
+				candObj.setCreatedAt(dateTime);
+				//candObj.setCreatedAt(createdAt);
+				candidateRepository.save(candObj);
+				updateCandRes.setStatus(status);
+				updateCandRes.setResult("Candidate Details Updated Successfully");
+				updateCandRes.setData(candObj);
+				return updateCandRes;
+			}
+			else {
+				status=false;
+				updateCandRes.setStatus(status);
+				updateCandRes.setResult("Specified Job List is not Present");
+				return updateCandRes;
+			}
+		}
+		else {
+			status=false;
+			updateCandRes.setStatus(status);
+			updateCandRes.setResult("Candidate Id is not Present");
+			return updateCandRes;
 		}
 	}
 

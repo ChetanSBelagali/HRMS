@@ -2,11 +2,13 @@ package com.aroha.HRMSProject.payload;
 
 import com.aroha.HRMSProject.model.Candidate;
 
-public class AcceptorRejectProfileResponse {
+public class InterviewFeedback {
 	
 	private boolean status;
 	private String result;
 	private Candidate data;
+	
+	
 	public boolean isStatus() {
 		return status;
 	}

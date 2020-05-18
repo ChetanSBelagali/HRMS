@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,8 @@ import com.aroha.HRMSProject.service.RoleService;
 @RestController
 @RequestMapping("/api")
 public class RoleController {
+	
+	private final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
 	@Autowired
 	private RoleService roleService;
@@ -29,6 +33,7 @@ public class RoleController {
 	@PostMapping("/createRole")
 	public ResponseEntity<?> createNewRole(@RequestBody CreateRole createNewRole,@CurrentUser UserPrincipal user){
 		if(!user.isAdminRole()) {
+			logger.error("Not Authorized to create role");
 			return ResponseEntity.ok("Not Authorized to create role");
 		}
 		Role getROle=createNewRole.getCreateRole();
@@ -40,6 +45,7 @@ public class RoleController {
 	@GetMapping("/findRoles")
 	public ResponseEntity<?> getAllRole(){
 		if(roleService.getAllRole().isEmpty()) {
+			logger.error("No role found");
 			return ResponseEntity.ok("No role found");
 		}
 //		return ResponseEntity.ok(roleService.getAllRole());
@@ -51,15 +57,15 @@ public class RoleController {
 			RoleResponse roleRes=new RoleResponse();
 			if(r.getRoleName().equals("ROLE_ADMIN")) {
 				roleRes.setRoleId(r.getRoleId());
-				roleRes.setRoleName("ADMIN");
+				roleRes.setRoleName("ROLE_ADMIN");
 
 			}if(r.getRoleName().equals("ROLE_MENTOR")) {
 				roleRes.setRoleId(r.getRoleId());
-				roleRes.setRoleName("MENTOR");
+				roleRes.setRoleName("ROLE_MENTOR");
 
 			}else if(r.getRoleName().equals("ROLE_HR")) {
 				roleRes.setRoleId(r.getRoleId());
-				roleRes.setRoleName("HR");
+				roleRes.setRoleName("ROLE_HUMAN_RESOURCE");
 
 			}
 			list.add(roleRes);

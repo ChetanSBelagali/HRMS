@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,7 +29,14 @@ public class Candidate implements Serializable {
 	private String createdAt;
 	private String setStatus;
 	private String interviewerName;
-	private String scheduledTime;
+	private String interviewerEmail;
+	private String interviewerMobNumber;
+	private String scheduledTime;	
+	private String statusAfterInterview;
+	@Lob
+	private String reason;	
+	@Lob
+	private String feedback;
 
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -116,5 +124,47 @@ public class Candidate implements Serializable {
 	public void setScheduledTime(String scheduledTime) {
 		this.scheduledTime = scheduledTime;
 	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getFeedback() {
+		return feedback;
+	}
+
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
+	}
+
+	public String getInterviewerEmail() {
+		return interviewerEmail;
+	}
+
+	public void setInterviewerEmail(String interviewerEmail) {
+		this.interviewerEmail = interviewerEmail;
+	}
+
+	public String getInterviewerMobNumber() {
+		return interviewerMobNumber;
+	}
+
+	public void setInterviewerMobNumber(String interviewerMobNumber) {
+		this.interviewerMobNumber = interviewerMobNumber;
+	}
+
+	public String getStatusAfterInterview() {
+		return statusAfterInterview;
+	}
+
+	public void setStatusAfterInterview(String statusAfterInterview) {
+		this.statusAfterInterview = statusAfterInterview;
+	}
+	
+	
 
 }

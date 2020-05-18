@@ -9,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.aroha.HRMSProject.payload.CreateCandidateRequest;
 import com.aroha.HRMSProject.payload.FileUploadResponse;
+import com.aroha.HRMSProject.payload.UpdateCandidateRequest;
 import com.aroha.HRMSProject.service.FileStorageService;
 
 @RestController
@@ -27,6 +28,18 @@ public class FileUploadController {
 
 		return new FileUploadResponse(fileName, fileDownloadUri,
 				file.getContentType(), file.getSize());
+	}
+	
+	public FileUploadResponse updateUploadFile(MultipartFile updateFile, UpdateCandidateRequest updateCandReq) {
+		String fileName = fileStorageService.updateStoreFile(updateFile, updateCandReq);
+
+		String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path("/downloadFile/")
+				.path(fileName)
+				.toUriString();
+
+		return new FileUploadResponse(fileName, fileDownloadUri,
+				updateFile.getContentType(), updateFile.getSize());
 	}
 
 }

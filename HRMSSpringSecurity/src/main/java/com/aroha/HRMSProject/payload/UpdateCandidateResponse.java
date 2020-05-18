@@ -2,7 +2,7 @@ package com.aroha.HRMSProject.payload;
 
 import com.aroha.HRMSProject.model.Candidate;
 
-public class AcceptorRejectProfileResponse {
+public class UpdateCandidateResponse {
 	
 	private boolean status;
 	private String result;
